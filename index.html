@@ -1,827 +1,492 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Vocal — FINEBLOCK</title>
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Agenda PEC">
-<meta name="theme-color" content="#1A4A2E">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="theme-color" content="#1B3A2D"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Agenda Vocal"/>
+<link rel="manifest" href="manifest.json"/>
+<title>Agenda Vocal · FINEBLOCK</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --dark:#1B3A2D;--dark2:#2D6A4F;--gold:#C9A84C;--gold2:#E8C97A;
+  --bg:#F5F2EC;--bg2:#FFFDF8;--bg3:#EDE9E0;
+  --text:#1A1A1A;--text2:#555;--text3:#999;
+  --border:#DDD8CE;--radius:12px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Georgia',serif;}
+#app{display:flex;flex-direction:column;min-height:100dvh;}
 
-  :root {
-    --vert-baobab: #1A4A2E;
-    --or-savane:   #C8922A;
-    --creme:       #F7F3EC;
-    --brun-sol:    #3D2B1F;
-    --gris-clair:  #E8E2D9;
-    --blanc:       #FEFCF8;
-    --rouge-alerte:#B94040;
-    --vert-clair:  #2D7A4F;
-  }
+/* HEADER */
+#header{
+  background:var(--dark);
+  padding:calc(env(safe-area-inset-top,0px)+12px) 16px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-area{display:flex;align-items:center;gap:10px;}
+.logo-area img{width:36px;height:36px;}
+.logo-text{color:#fff;}
+.logo-text .name{font-size:16px;font-weight:700;letter-spacing:.5px;}
+.logo-text .sub{font-size:9px;color:#aaa;letter-spacing:2px;text-transform:uppercase;}
+.date-area{text-align:right;color:#aaa;font-size:11px;font-family:'Inter',sans-serif;}
+.date-area .day{color:var(--gold2);font-size:13px;font-weight:600;}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+/* WEEK NAV */
+#week-nav{
+  background:var(--dark2);padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;}
+#week-range{color:#fff;font-size:14px;font-weight:600;text-align:center;}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--creme);
-    color: var(--brun-sol);
-    min-height: 100vh;
-  }
+/* WEEK GRID */
+#week-grid{display:grid;grid-template-columns:repeat(7,1fr);background:var(--bg3);border-bottom:2px solid var(--gold);}
+.day-col{border-right:1px solid var(--border);padding-bottom:8px;}
+.day-col:last-child{border-right:none;}
+.day-header{text-align:center;padding:8px 2px 6px;border-bottom:1px solid var(--border);}
+.day-header .lbl{font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;font-family:'Inter',sans-serif;}
+.day-header .num{font-size:17px;color:var(--text2);margin-top:2px;}
+.day-header.today .num{width:28px;height:28px;background:var(--dark);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+.evts{padding:3px 2px;display:flex;flex-direction:column;gap:2px;}
+.evt{border-radius:4px;padding:3px 4px;font-size:9px;line-height:1.3;border-left:2px solid;cursor:pointer;}
+.evt-time{font-weight:700;margin-bottom:1px;font-family:'Inter',sans-serif;}
+.evt-title{font-weight:400;word-break:break-word;}
 
-  /* HEADER */
-  header {
-    background: var(--vert-baobab);
-    color: var(--creme);
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 3px solid var(--or-savane);
-  }
-  .logo-zone { display: flex; align-items: center; gap: 12px; }
-  .baobab-icon { font-size: 28px; line-height:1; }
-  .logo-text { line-height:1.1; }
-  .logo-text strong { font-family:'DM Serif Display', serif; font-size:18px; letter-spacing:.5px; }
-  .logo-text span { font-size:11px; opacity:.7; font-weight:300; letter-spacing:1.5px; text-transform:uppercase; }
-  .date-now { font-family:'DM Mono', monospace; font-size:13px; opacity:.8; text-align:right; line-height:1.4; }
+/* BOTTOM */
+#bottom{background:var(--bg2);border-top:2px solid var(--gold);padding:16px 16px calc(env(safe-area-inset-bottom,0px)+16px);}
 
-  /* LAYOUT */
-  .app { display:grid; grid-template-columns:1fr 340px; gap:0; height:calc(100vh - 70px); }
+#status-bar{
+  text-align:center;font-size:12px;color:var(--text3);
+  margin-bottom:14px;font-family:'Inter',sans-serif;
+  min-height:18px;
+}
+#status-bar.listening{color:var(--dark2);font-weight:600;}
+#status-bar.success{color:#2D6A4F;font-weight:600;}
+#status-bar.error{color:#c0392b;}
 
-  /* AGENDA PANEL */
-  .agenda-panel {
-    padding: 24px 28px;
-    overflow-y: auto;
-    border-right: 1px solid var(--gris-clair);
-  }
+/* MIC BUTTON */
+#mic-wrap{display:flex;justify-content:center;margin-bottom:16px;position:relative;}
+#mic-ring{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:90px;height:90px;border-radius:50%;
+  border:2px solid var(--dark2);opacity:0;
+  display:none;
+}
+#mic-ring.active{display:block;animation:ring 1.2s ease-out infinite;}
+@keyframes ring{0%{transform:translate(-50%,-50%) scale(1);opacity:.6;}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0;}}
+#mic-btn{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--dark);border:none;color:#fff;
+  font-size:28px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;position:relative;z-index:1;
+  box-shadow:0 4px 15px rgba(27,58,45,.3);
+}
+#mic-btn.listening{background:var(--dark2);transform:scale(1.05);}
+#mic-btn.listening::after{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:2px solid var(--gold);animation:pulse-border 1s ease-in-out infinite;
+}
+@keyframes pulse-border{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-  .week-nav {
-    display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;
-  }
-  .week-nav h2 { font-family:'DM Serif Display', serif; font-size:22px; }
-  .btn-nav {
-    background:none; border:1.5px solid var(--gris-clair); border-radius:6px;
-    padding:6px 14px; cursor:pointer; font-size:16px; color:var(--brun-sol);
-    transition: all .2s;
-  }
-  .btn-nav:hover { border-color:var(--or-savane); color:var(--or-savane); }
+/* TRANSCRIPT */
+#transcript{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;
+  min-height:42px;margin-bottom:12px;font-style:italic;
+  display:none;
+}
+#transcript.visible{display:block;}
 
-  .day-block { margin-bottom: 18px; }
-  .day-header {
-    display:flex; align-items:center; gap:10px; margin-bottom:8px;
-    padding-bottom:6px; border-bottom:1px solid var(--gris-clair);
-  }
-  .day-label {
-    font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase;
-    color: var(--vert-baobab); opacity:.7;
-  }
-  .day-date {
-    font-family:'DM Serif Display', serif; font-size:22px; color: var(--brun-sol);
-  }
-  .day-today .day-date { color: var(--or-savane); }
-  .today-badge {
-    font-size:10px; background:var(--or-savane); color:white;
-    padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:.5px;
-  }
+/* CONFIRM */
+#confirm-area{display:none;margin-bottom:12px;}
+#confirm-area.visible{display:block;}
+.confirm-card{
+  background:var(--dark);color:#fff;border-radius:var(--radius);
+  padding:12px 16px;margin-bottom:10px;
+}
+.confirm-card .ctitle{font-size:15px;font-weight:700;margin-bottom:4px;}
+.confirm-card .cdate{font-size:12px;color:var(--gold2);font-family:'Inter',sans-serif;}
+.confirm-btns{display:flex;gap:8px;}
+#btn-confirm{flex:1;background:var(--gold);color:var(--dark);border:none;border-radius:8px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;}
+#btn-reject{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:11px 16px;font-size:13px;cursor:pointer;font-family:inherit;}
 
-  .event-card {
-    background: var(--blanc);
-    border: 1px solid var(--gris-clair);
-    border-left: 4px solid var(--vert-clair);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    transition: box-shadow .2s;
-  }
-  .event-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
-  .event-card.urgent { border-left-color: var(--or-savane); }
-  .event-card.deadline { border-left-color: var(--rouge-alerte); }
+/* MANUAL */
+#manual-area{display:flex;gap:8px;margin-top:4px;}
+#manual-input{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;color:var(--text);
+  font-size:13px;font-family:inherit;outline:none;
+}
+#manual-input:focus{border-color:var(--dark2);}
+#manual-input::placeholder{color:var(--text3);}
+#manual-send{
+  background:var(--dark);color:#fff;border:none;
+  border-radius:8px;padding:10px 16px;font-size:16px;cursor:pointer;
+}
 
-  .event-time {
-    font-family:'DM Mono', monospace; font-size:12px; color:var(--or-savane);
-    font-weight:500; white-space:nowrap; margin-top:2px;
-  }
-  .event-title { font-size:14px; font-weight:500; line-height:1.3; }
-  .event-note { font-size:12px; opacity:.6; margin-top:3px; }
-  .event-actions { display:flex; gap:6px; opacity:0; transition:.2s; }
-  .event-card:hover .event-actions { opacity:1; }
-  .btn-del { background:none; border:none; cursor:pointer; font-size:14px; padding:2px; opacity:.5; }
-  .btn-del:hover { opacity:1; color:var(--rouge-alerte); }
+/* QUICK CHIPS */
+#chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.chip{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;font-size:11px;
+  color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;
+  white-space:nowrap;
+}
+.chip:active{background:var(--dark);color:#fff;border-color:var(--dark);}
 
-  .empty-day { font-size:13px; opacity:.4; padding:6px 2px; font-style:italic; }
-
-  /* VOICE PANEL */
-  .voice-panel {
-    background: var(--blanc);
-    display:flex; flex-direction:column;
-    height: 100%;
-  }
-
-  .voice-header {
-    padding:20px 22px 14px;
-    border-bottom:1px solid var(--gris-clair);
-  }
-  .voice-header h3 { font-family:'DM Serif Display', serif; font-size:17px; margin-bottom:4px; }
-  .voice-header p { font-size:12px; opacity:.55; line-height:1.5; }
-
-  /* MIC BUTTON */
-  .mic-zone {
-    padding:24px 22px;
-    display:flex; flex-direction:column; align-items:center; gap:16px;
-    border-bottom:1px solid var(--gris-clair);
-  }
-
-  .mic-btn {
-    width:80px; height:80px; border-radius:50%;
-    border:none; cursor:pointer;
-    background: var(--vert-baobab);
-    color: white; font-size:32px;
-    display:flex; align-items:center; justify-content:center;
-    transition: all .25s;
-    box-shadow: 0 4px 20px rgba(26,74,46,.25);
-    position:relative;
-  }
-  .mic-btn:hover { transform:scale(1.05); box-shadow:0 6px 28px rgba(26,74,46,.35); }
-  .mic-btn.listening {
-    background: var(--rouge-alerte);
-    animation: pulse-ring 1.2s infinite;
-  }
-  .mic-btn.processing { background: var(--or-savane); }
-
-  @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(185,64,64,.4); }
-    70% { box-shadow: 0 0 0 20px rgba(185,64,64,0); }
-    100% { box-shadow: 0 0 0 0 rgba(185,64,64,0); }
-  }
-
-  .mic-status {
-    font-size:13px; font-weight:500; color:var(--brun-sol); opacity:.65;
-    text-align:center; min-height:20px;
-  }
-  .mic-status.active { color:var(--rouge-alerte); opacity:1; }
-  .mic-status.processing { color:var(--or-savane); opacity:1; }
-
-  /* TRANSCRIPT */
-  .transcript-zone {
-    padding:14px 22px;
-    border-bottom:1px solid var(--gris-clair);
-    min-height:70px;
-  }
-  .transcript-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; opacity:.5; margin-bottom:6px; font-weight:600; }
-  .transcript-text {
-    font-size:14px; line-height:1.5; color:var(--brun-sol);
-    font-style:italic; min-height:40px;
-  }
-  .transcript-text.interim { opacity:.5; }
-
-  /* RESPONSE */
-  .response-zone {
-    padding:14px 22px;
-    flex:1; overflow-y:auto;
-  }
-  .response-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; opacity:.5; margin-bottom:8px; font-weight:600; }
-  .response-bubble {
-    background: linear-gradient(135deg, var(--vert-baobab), #2D6B47);
-    color:white; border-radius:12px 12px 12px 4px;
-    padding:12px 16px; font-size:13px; line-height:1.6;
-    min-height:40px;
-  }
-  .response-bubble.empty { background:var(--gris-clair); color:var(--brun-sol); opacity:.6; font-style:italic; }
-
-  /* TEXT INPUT FALLBACK */
-  .text-fallback {
-    padding:14px 22px 18px;
-    border-top:1px solid var(--gris-clair);
-  }
-  .text-fallback label { font-size:11px; opacity:.5; letter-spacing:.5px; display:block; margin-bottom:6px; }
-  .text-input-row { display:flex; gap:8px; }
-  .text-input {
-    flex:1; padding:9px 12px; border:1.5px solid var(--gris-clair);
-    border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px;
-    background:var(--creme); color:var(--brun-sol); outline:none;
-    transition:border .2s;
-  }
-  .text-input:focus { border-color:var(--vert-baobab); }
-  .btn-send {
-    padding:9px 16px; background:var(--vert-baobab); color:white;
-    border:none; border-radius:8px; cursor:pointer; font-size:14px;
-    font-weight:600; transition:.2s;
-  }
-  .btn-send:hover { background:var(--vert-clair); }
-
-  /* EXAMPLES CHIP */
-  .examples { padding:0 22px 14px; display:flex; flex-wrap:wrap; gap:6px; }
-  .chip {
-    font-size:11px; padding:4px 10px; border-radius:20px;
-    background:var(--gris-clair); color:var(--brun-sol); cursor:pointer;
-    border:none; transition:.2s; font-family:'DM Sans',sans-serif;
-  }
-  .chip:hover { background:var(--vert-baobab); color:white; }
-
-  /* TOAST */
-  #toast {
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
-    background:var(--vert-baobab); color:white; padding:10px 22px;
-    border-radius:30px; font-size:13px; font-weight:500;
-    opacity:0; transition:opacity .3s; pointer-events:none;
-    z-index:99;
-  }
-  #toast.show { opacity:1; }
-
-  .loader { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  @media(max-width:700px) {
-    .app { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
-    .agenda-panel { border-right:none; border-bottom:1px solid var(--gris-clair); max-height:45vh; }
-    .voice-panel { height:auto; }
-  }
+/* MODAL DELETE */
+.evt:active{opacity:.7;}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo-zone">
-    <div class="baobab-icon">🌳</div>
-    <div class="logo-text">
-      <strong>Agenda Vocal</strong><br>
-      <span>FINEBLOCK · P.E.C</span>
-    </div>
-  </div>
-  <div class="date-now" id="headerDate"></div>
-  <button id="installBtn" onclick="installPWA()" style="display:none; align-items:center; gap:6px; background:var(--or-savane); color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif;">
-    📲 Installer
-  </button>
-</header>
-
-<div class="app">
-
-  <!-- AGENDA -->
-  <div class="agenda-panel">
-    <div class="week-nav">
-      <button class="btn-nav" onclick="changeWeek(-1)">◀ Préc.</button>
-      <h2 id="weekTitle"></h2>
-      <button class="btn-nav" onclick="changeWeek(1)">Suiv. ▶</button>
-    </div>
-    <div id="agendaView"></div>
-  </div>
-
-  <!-- VOICE PANEL -->
-  <div class="voice-panel">
-    <div class="voice-header">
-      <h3>Assistant vocal</h3>
-      <p>Parlez naturellement en français.<br>Ajoutez, consultez ou supprimez des événements.</p>
-    </div>
-
-    <div class="mic-zone">
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Cliquez pour parler">
-        🎤
-      </button>
-      <div class="mic-status" id="micStatus">Cliquez pour parler</div>
-    </div>
-
-    <div class="transcript-zone">
-      <div class="transcript-label">Vous avez dit</div>
-      <div class="transcript-text" id="transcriptText">—</div>
-    </div>
-
-    <div class="response-zone">
-      <div class="response-label">Réponse</div>
-      <div class="response-bubble empty" id="responseBubble">Prêt à vous écouter…</div>
-    </div>
-
-    <div class="examples">
-      <button class="chip" onclick="simulateVoice('Ajoute réunion Finance Innovation lundi à 14h')">+ Réunion lundi 14h</button>
-      <button class="chip" onclick="simulateVoice('Qu\'est-ce que j\'ai demain ?')">Demain ?</button>
-      <button class="chip" onclick="simulateVoice('Qu\'ai-je cette semaine ?')">Cette semaine ?</button>
-      <button class="chip" onclick="simulateVoice('Présentation jury 30 juin à 9h Bourse de Paris')">Jury 30 juin</button>
-    </div>
-
-    <div class="text-fallback">
-      <label>Ou tapez votre demande</label>
-      <div class="text-input-row">
-        <input class="text-input" type="text" id="textInput" placeholder="Ex : Réunion vendredi à 15h…" onkeydown="if(event.key==='Enter') sendText()">
-        <button class="btn-send" onclick="sendText()">→</button>
+<div id="app">
+  <div id="header">
+    <div class="logo-area">
+      <svg width="36" height="36" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="#2D6A4F"/><text x="50" y="68" text-anchor="middle" font-size="52">🌳</text></svg>
+      <div class="logo-text">
+        <div class="name">Agenda Vocal</div>
+        <div class="sub">FINEBLOCK · P.E.C</div>
       </div>
+    </div>
+    <div class="date-area">
+      <div class="day" id="hdr-day"></div>
+      <div id="hdr-date"></div>
+    </div>
+  </div>
+
+  <div id="week-nav">
+    <button class="nav-btn" onclick="shiftWeek(-1)">◀ Préc.</button>
+    <div id="week-range"></div>
+    <button class="nav-btn" onclick="shiftWeek(1)">Suiv. ▶</button>
+  </div>
+
+  <div id="week-grid"></div>
+
+  <div id="bottom">
+    <div id="status-bar">Appuyez sur le micro pour parler</div>
+
+    <div id="mic-wrap">
+      <div id="mic-ring"></div>
+      <button id="mic-btn" onclick="toggleMic()">🎙</button>
+    </div>
+
+    <div id="chips">
+      <div class="chip" onclick="quickAdd('Réunion lundi 14h')">+ Réunion lundi 14h</div>
+      <div class="chip" onclick="quickAdd('Demain ?')">Demain ?</div>
+      <div class="chip" onclick="quickAdd('Cette semaine ?')">Cette semaine ?</div>
+      <div class="chip" onclick="quickAdd('Jury Finance Innovation novembre 2026 10h')">Jury Finance Innovation</div>
+    </div>
+
+    <div id="transcript"></div>
+
+    <div id="confirm-area">
+      <div class="confirm-card">
+        <div class="ctitle" id="c-title"></div>
+        <div class="cdate" id="c-date"></div>
+      </div>
+      <div class="confirm-btns">
+        <button id="btn-reject" onclick="rejectEvent()">✕ Annuler</button>
+        <button id="btn-confirm" onclick="confirmEvent()">✓ Ajouter</button>
+      </div>
+    </div>
+
+    <div id="manual-area">
+      <input id="manual-input" type="text" placeholder='Ex : "Réunion vendredi 10h avec Eric"'
+        onkeydown="if(event.key==='Enter')manualAdd()"/>
+      <button id="manual-send" onclick="manualAdd()">→</button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
-
 <script>
-// ─── STORAGE ─────────────────────────────────────────────
-const STORAGE_KEY = 'fineblock_agenda_v2';
+// ── CONSTANTS ─────────────────────────────────────────────────────────────
+const JOURS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const JOURS_FULL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const MOIS_SHORT=['jan','fév','mar','avr','mai','jun','juil','aoû','sep','oct','nov','déc'];
+const COLORS=['#2D6A4F','#E76F51','#264653','#8338EC','#E9C46A','#2A9D8F','#F4A261','#40916C','#E63946','#457B9D'];
 
-async function loadEvents() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
+// ── STATE ─────────────────────────────────────────────────────────────────
+function load(){try{return JSON.parse(localStorage.getItem('fb_agenda')||'[]');}catch(e){return[];}}
+function save(e){try{localStorage.setItem('fb_agenda',JSON.stringify(e));}catch(e){}}
+let events=load();
+let weekBase=new Date();
+let recognition=null;
+let listening=false;
+let pendingEvent=null;
+
+// ── DATE HELPERS ──────────────────────────────────────────────────────────
+function toDS(d){return d.toISOString().split('T')[0];}
+function weekDates(base){
+  const d=new Date(base),day=d.getDay(),mon=new Date(d);
+  mon.setDate(d.getDate()-(day===0?6:day-1));
+  return Array.from({length:7},(_,i)=>{const nd=new Date(mon);nd.setDate(mon.getDate()+i);return nd;});
+}
+function fmtDate(ds){
+  const d=new Date(ds+'T12:00:00');
+  return JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear();
 }
 
-async function saveEvents(events) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  } catch(e) { console.error('Storage error', e); }
+// ── PARSE ─────────────────────────────────────────────────────────────────
+function parseCmd(text){
+  const t=text.toLowerCase().trim();
+  
+  // Query?
+  if(t.match(/qu['']?[aà]/)||t.includes('programme')||t.includes('agenda')||t.includes('prévu')||t.match(/demain\s*\?/)||t.match(/semaine\s*\?/)){
+    return{type:'query',text};
+  }
+
+  // Parse time
+  let hour=9,minute=0;
+  const tm=t.match(/(\d{1,2})\s*h\s*(\d{0,2})/);
+  if(tm){hour=parseInt(tm[1]);minute=tm[2]?parseInt(tm[2])||0:0;}
+
+  // Parse date
+  let date=new Date();
+  if(t.includes('demain'))date.setDate(date.getDate()+1);
+  else if(t.includes('après-demain')||t.includes('apres-demain'))date.setDate(date.getDate()+2);
+  else{
+    for(let i=0;i<7;i++){
+      if(t.includes(JOURS_FULL[i])){
+        const nd=new Date();
+        while(nd.getDay()!==i)nd.setDate(nd.getDate()+1);
+        date=nd;break;
+      }
+    }
+    // Check for month dates like "18 juin", "30 novembre"
+    for(let i=0;i<12;i++){
+      const rx=new RegExp('(\\d{1,2})\\s+'+MOIS_SHORT[i]);
+      const mx=t.match(rx);
+      if(mx){
+        date=new Date();
+        date.setMonth(i);
+        date.setDate(parseInt(mx[1]));
+        if(date<new Date()&&!t.includes('aujourd'))date.setFullYear(date.getFullYear()+1);
+        break;
+      }
+    }
+  }
+
+  // Clean title
+  let title=text
+    .replace(/merci\s+de\s+(noter|ajouter|enregistrer)|notez|note[sz]?|ajoute[zr]?|rappel[- ]?moi|s'il vous plaît|stp|svp/gi,'')
+    .replace(/un\s+rendez-vous|rendez-vous|un\s+rdv\b|une\s+réunion|un\s+appel/gi,(m)=>m.includes('réunion')?'Réunion':m.includes('appel')?'Appel':'RDV')
+    .replace(/aujourd'?hui|demain|après-demain|apres-demain/gi,'')
+    .replace(new RegExp(JOURS_FULL.join('|'),'gi'),'')
+    .replace(new RegExp(MOIS_SHORT.map(m=>m+'\\b').join('|'),'gi'),'')
+    .replace(/(\d{1,2})\s*h\s*(\d{0,2})/gi,'')
+    .replace(/à\s+\d{1,2}\s*heures?/gi,'')
+    .replace(/ce\s+(matin|soir|après-midi|jour)/gi,'')
+    .replace(/cet?\s+après-midi/gi,'')
+    .replace(/\d{1,2}\s+/g,' ')
+    .replace(/\s+/g,' ').trim();
+
+  if(!title||title.length<2)title=text.replace(/(\d{1,2}h\d{0,2})/g,'').trim()||'Événement';
+
+  return{
+    type:'add',
+    id:Date.now(),
+    title,
+    date:toDS(date),
+    hour,minute,
+    color:COLORS[Math.floor(Math.random()*COLORS.length)]
+  };
 }
 
-let allEvents = [];
-let currentWeekOffset = 0;
-
-// ─── DATE UTILS ──────────────────────────────────────────
-function getMonday(offset = 0) {
-  const d = new Date();
-  const day = d.getDay() || 7;
-  d.setDate(d.getDate() - day + 1 + offset * 7);
-  d.setHours(0,0,0,0);
-  return d;
+function handleQuery(text){
+  const t=text.toLowerCase();
+  let d=new Date();
+  if(t.includes('demain'))d.setDate(d.getDate()+1);
+  const ds=toDS(d);
+  const evts=events.filter(e=>e.date===ds);
+  if(evts.length===0){
+    setStatus(t.includes('demain')?'Rien de prévu demain.':'Rien de prévu aujourd\'hui.','success');
+  }else{
+    const list=evts.sort((a,b)=>a.hour-b.hour).map(e=>`${String(e.hour).padStart(2,'0')}h${String(e.minute).padStart(2,'0')} — ${e.title}`).join('\n');
+    setStatus(list,'success');
+  }
 }
-function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
-function isoDate(d) { return d.toISOString().split('T')[0]; }
-function formatDay(d) {
-  return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-}
-function isToday(d) { return isoDate(d) === isoDate(new Date()); }
 
-// ─── RENDER AGENDA ───────────────────────────────────────
-function renderAgenda() {
-  const monday = getMonday(currentWeekOffset);
-  const sunday = addDays(monday, 6);
-  document.getElementById('weekTitle').textContent =
-    `${monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} – ${sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
+// ── RENDER ────────────────────────────────────────────────────────────────
+function render(){
+  const now=new Date();
+  const days=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  document.getElementById('hdr-day').textContent=days[now.getDay()].charAt(0).toUpperCase()+days[now.getDay()].slice(1);
+  document.getElementById('hdr-date').textContent=now.getDate()+' '+MOIS[now.getMonth()].slice(0,3)+' '+now.getFullYear();
 
-  const view = document.getElementById('agendaView');
-  view.innerHTML = '';
+  const dates=weekDates(weekBase);
+  const today=toDS(new Date());
+  const d0=dates[0],d6=dates[6];
+  document.getElementById('week-range').textContent=
+    d0.getDate()+' '+MOIS[d0.getMonth()].slice(0,4)+' – '+d6.getDate()+' '+MOIS[d6.getMonth()].slice(0,4)+'\n'+d0.getFullYear();
 
-  for (let i = 0; i < 7; i++) {
-    const day = addDays(monday, i);
-    const dateStr = isoDate(day);
-    const dayEvents = allEvents
-      .filter(e => e.date === dateStr)
-      .sort((a,b) => (a.time||'').localeCompare(b.time||''));
-
-    const block = document.createElement('div');
-    block.className = 'day-block' + (isToday(day) ? ' day-today' : '');
-
-    const labels = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-    const today = isToday(day) ? '<span class="today-badge">Aujourd\'hui</span>' : '';
-
-    block.innerHTML = `
-      <div class="day-header">
-        <div class="day-label">${labels[i]}</div>
-        <div class="day-date">${day.getDate()} ${day.toLocaleDateString('fr-FR',{month:'long'})}</div>
-        ${today}
+  const grid=document.getElementById('week-grid');
+  grid.innerHTML='';
+  dates.forEach(d=>{
+    const ds=toDS(d);
+    const isToday=ds===today;
+    const dayEvts=events.filter(e=>e.date===ds).sort((a,b)=>a.hour*60+a.minute-(b.hour*60+b.minute));
+    const col=document.createElement('div');
+    col.className='day-col';
+    const numHtml=isToday?`<div class="num today">${d.getDate()}</div>`:`<div class="num">${d.getDate()}</div>`;
+    col.innerHTML=`
+      <div class="day-header ${isToday?'today':''}">
+        <div class="lbl">${JOURS[d.getDay()]}</div>
+        ${isToday?`<div class="num" style="width:28px;height:28px;background:#1B3A2D;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin:0 auto;">${d.getDate()}</div>`:`<div class="num">${d.getDate()}</div>`}
+      </div>
+      <div class="evts">${dayEvts.map(ev=>`
+        <div class="evt" style="background:${ev.color}18;border-left-color:${ev.color}" onclick="delEvt(${ev.id})">
+          <div class="evt-time" style="color:${ev.color}">${String(ev.hour).padStart(2,'0')}h${String(ev.minute).padStart(2,'0')}</div>
+          <div class="evt-title">${ev.title}</div>
+        </div>`).join('')}
       </div>`;
-
-    if (dayEvents.length === 0) {
-      block.innerHTML += `<div class="empty-day">Rien de prévu</div>`;
-    } else {
-      dayEvents.forEach(ev => {
-        const card = document.createElement('div');
-        card.className = 'event-card' + (ev.urgent ? ' urgent' : '') + (ev.deadline ? ' deadline' : '');
-        card.innerHTML = `
-          <div>
-            <div class="event-time">${ev.time || 'Toute la journée'}</div>
-            <div class="event-title">${ev.title}</div>
-            ${ev.note ? `<div class="event-note">${ev.note}</div>` : ''}
-          </div>
-          <div class="event-actions">
-            <button class="btn-del" onclick="deleteEvent('${ev.id}')" title="Supprimer">🗑</button>
-          </div>`;
-        block.appendChild(card);
-      });
-    }
-    view.appendChild(block);
-  }
-}
-
-function changeWeek(dir) {
-  currentWeekOffset += dir;
-  renderAgenda();
-}
-
-// ─── EVENT CRUD ──────────────────────────────────────────
-async function addEvent(ev) {
-  ev.id = Date.now().toString();
-  allEvents.push(ev);
-  await saveEvents(allEvents);
-  renderAgenda();
-}
-
-async function deleteEvent(id) {
-  allEvents = allEvents.filter(e => e.id !== id);
-  await saveEvents(allEvents);
-  renderAgenda();
-  toast('Événement supprimé');
-}
-
-// ─── TOAST ───────────────────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ─── SPEECH RECOGNITION ──────────────────────────────────
-let recognition = null;
-let isListening = false;
-
-function setupSpeech() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return null;
-  const r = new SR();
-  r.lang = 'fr-FR';
-  r.continuous = false;
-  r.interimResults = true;
-
-  r.onresult = (e) => {
-    let interim = '', final = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
-    }
-    const el = document.getElementById('transcriptText');
-    el.textContent = final || interim || '—';
-    el.className = 'transcript-text' + (final ? '' : ' interim');
-    if (final) processCommand(final);
-  };
-
-  r.onend = () => {
-    isListening = false;
-    updateMicUI('idle');
-  };
-
-  r.onerror = (e) => {
-    isListening = false;
-    updateMicUI('idle');
-    if (e.error !== 'no-speech') toast('Micro : ' + e.error);
-  };
-
-  return r;
-}
-
-function toggleMic() {
-  if (!recognition) recognition = setupSpeech();
-  if (!recognition) { toast('Reconnaissance vocale non supportée — utilisez la zone de texte'); return; }
-
-  if (isListening) {
-    recognition.stop();
-    isListening = false;
-    updateMicUI('idle');
-  } else {
-    recognition.start();
-    isListening = true;
-    updateMicUI('listening');
-    document.getElementById('transcriptText').textContent = '…';
-    document.getElementById('transcriptText').className = 'transcript-text interim';
-  }
-}
-
-function updateMicUI(state) {
-  const btn = document.getElementById('micBtn');
-  const status = document.getElementById('micStatus');
-  btn.className = 'mic-btn';
-  if (state === 'listening') {
-    btn.classList.add('listening');
-    btn.textContent = '⏹';
-    status.textContent = '● Écoute en cours…';
-    status.className = 'mic-status active';
-  } else if (state === 'processing') {
-    btn.classList.add('processing');
-    btn.textContent = '⏳';
-    status.textContent = 'Traitement…';
-    status.className = 'mic-status processing';
-  } else {
-    btn.textContent = '🎤';
-    status.textContent = 'Cliquez pour parler';
-    status.className = 'mic-status';
-  }
-}
-
-// ─── SIMULATE VOICE (chips) ──────────────────────────────
-function simulateVoice(text) {
-  document.getElementById('transcriptText').textContent = text;
-  document.getElementById('transcriptText').className = 'transcript-text';
-  processCommand(text);
-}
-
-// ─── TEXT INPUT ──────────────────────────────────────────
-function sendText() {
-  const inp = document.getElementById('textInput');
-  const val = inp.value.trim();
-  if (!val) return;
-  document.getElementById('transcriptText').textContent = val;
-  document.getElementById('transcriptText').className = 'transcript-text';
-  inp.value = '';
-  processCommand(val);
-}
-
-// ─── MOTEUR NLP EMBARQUÉ (100% autonome, sans API) ───────
-
-const JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-
-function normalise(t) {
-  return t.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/['']/g,"'");
-}
-
-// Résoudre une expression de date en YYYY-MM-DD
-function resoudreDate(texte) {
-  const t = normalise(texte);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  // "aujourd'hui"
-  if (/aujourd'?hui/.test(t)) return isoDate(today);
-
-  // "demain"
-  if (/demain/.test(t)) return isoDate(addDays(today,1));
-
-  // "après-demain"
-  if (/apres.?demain/.test(t)) return isoDate(addDays(today,2));
-
-  // "lundi prochain", "le lundi", "lundi"
-  for (let i=0; i<7; i++) {
-    if (t.includes(JOURS[i])) {
-      const cur = today.getDay();
-      let diff = i - cur;
-      if (diff <= 0) diff += 7;
-      return isoDate(addDays(today, diff));
-    }
-  }
-
-  // "15 juin", "30 juin 2026", "le 30 juin"
-  const mMatch = t.match(/(\d{1,2})\s+(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)(?:\s+(\d{4}))?/);
-  if (mMatch) {
-    const day = parseInt(mMatch[1]);
-    const month = MOIS.findIndex(m => normalise(m) === mMatch[2]);
-    const year = mMatch[3] ? parseInt(mMatch[3]) : today.getFullYear();
-    const d = new Date(year, month, day);
-    if (d < today && !mMatch[3]) d.setFullYear(year+1);
-    return isoDate(d);
-  }
-
-  // "cette semaine" → aujourd'hui
-  if (/cette semaine|semaine/.test(t)) return isoDate(today);
-
-  return null;
-}
-
-// Résoudre une heure en "HH:MM"
-function resoudreHeure(texte) {
-  const t = normalise(texte);
-
-  // "14h30", "14h", "14:30"
-  const h1 = t.match(/(\d{1,2})h(\d{2})?/);
-  if (h1) {
-    const h = h1[1].padStart(2,'0');
-    const m = h1[2] ? h1[2] : '00';
-    return `${h}:${m}`;
-  }
-
-  // "quatorze heures", "neuf heures", etc.
-  const motsHeure = {
-    'une':1,'deux':2,'trois':3,'quatre':4,'cinq':5,'six':6,
-    'sept':7,'huit':8,'neuf':9,'dix':10,'onze':11,'douze':12,
-    'treize':13,'quatorze':14,'quinze':15,'seize':16,
-    'dix-sept':17,'dix sept':17,'dix-huit':18,'dix huit':18,
-    'dix-neuf':19,'dix neuf':19,'vingt':20,'vingt et une':21,
-    'vingt-deux':22,'vingt deux':22,'vingt-trois':23,'vingt trois':23
-  };
-  for (const [mot, val] of Object.entries(motsHeure)) {
-    if (t.includes(mot + ' heure') || t.includes(mot + 'h')) {
-      return `${String(val).padStart(2,'0')}:00`;
-    }
-  }
-
-  // "midi"
-  if (/midi/.test(t)) return '12:00';
-  // "minuit"
-  if (/minuit/.test(t)) return '00:00';
-  // "matin" → 9h, "après-midi" → 14h, "soir" → 19h
-  if (/\bmatin\b/.test(t) && !resoudreHeure(t.replace('matin',''))) return '09:00';
-  if (/apres.?midi/.test(t) && !h1) return '14:00';
-  if (/\bsoir\b/.test(t) && !h1) return '19:00';
-
-  return '';
-}
-
-// Extraire le titre de l'événement
-function extraireTitre(texte) {
-  let t = texte;
-  // Supprimer formules de politesse
-  t = t.replace(/bonjour[,\s]*/gi,'').replace(/s'?il (vous|te) pla[iî]t[,\s]*/gi,'').trim();
-  // Supprimer mots de commande
-  t = t.replace(/^(ajoute|ajouter|note|noter|rappelle.moi que?|je dois|mets|mettre|inscris|inscris.moi|planifie|planifier|crée|créer|prévoir|prévois)\s*/gi,'');
-  // Supprimer la date et l'heure
-  t = t.replace(/\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b/gi,'');
-  t = t.replace(/\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b/gi,'');
-  t = t.replace(/\d{1,2}h\d{0,2}/g,'').replace(/\d{1,2}:\d{2}/g,'');
-  t = t.replace(/\b(ce|cette|le|la|les|un|une|du|au|à|a|pour|avec|demain|aujourd'hui|prochain|prochaine|matin|soir|après-midi|apres-midi)\b/gi,' ');
-  t = t.replace(/\s{2,}/g,' ').trim();
-  // Capitaliser
-  return t.charAt(0).toUpperCase() + t.slice(1);
-}
-
-// Détecter les dates de consultation (cette semaine, demain, etc.)
-function datesConsultation(texte) {
-  const t = normalise(texte);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const dates = [];
-
-  if (/cette semaine|semaine/.test(t)) {
-    for (let i=0; i<7; i++) dates.push(isoDate(addDays(today,i)));
-    return dates;
-  }
-  if (/demain/.test(t)) { dates.push(isoDate(addDays(today,1))); return dates; }
-  if (/aujourd'?hui/.test(t)) { dates.push(isoDate(today)); return dates; }
-  if (/ce (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)/.test(t)) {
-    const d = resoudreDate(texte); if(d) dates.push(d); return dates;
-  }
-  // Jour de la semaine seul
-  for (const j of JOURS) {
-    if (t.includes(j)) { const d = resoudreDate(j); if(d) dates.push(d); return dates; }
-  }
-  return null;
-}
-
-// Détecter l'intention
-function detecterIntention(texte) {
-  const t = normalise(texte);
-
-  // SUPPRESSION
-  if (/\b(supprime|supprimer|efface|effacer|annule|annuler|retire|enlève|enlever|delete)\b/.test(t)) return 'delete';
-
-  // CONSULTATION
-  if (/\b(quoi|qu'est.ce|qu'ai.je|qu'est ce que j'ai|qu'ai je|qu'y a.t.il|qu'y a t il|qu'est-ce que j'ai|quel(s|les)? (rdv|rendez.vous|événement|event|réunion)|montre|affiche|liste|voir|voir mes|rappelle|rappel|c'est quoi|programme)\b/.test(t) ||
-      /\b(cette semaine|demain|aujourd'hui|ce (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche))\b/.test(t) && !/\b(ajoute|note|crée|prévoir|rendez.vous|réunion|appel|meeting|prends?)\b/.test(t)) {
-    return 'list';
-  }
-
-  // AJOUT
-  if (/\b(ajoute|ajouter|note|noter|rappelle.moi|mets|mettre|inscris|planifie|crée|créer|prévois|prévoir|j'ai|j'aurai|rendez.vous|réunion|meeting|rdv|appel|appeler|entretien|visite|rencontre|souhaite|veux|dois)\b/.test(t)) return 'add';
-
-  return 'unclear';
-}
-
-async function processCommand(text) {
-  updateMicUI('processing');
-  showResponse('⚙️ Analyse en cours…', false);
-
-  await new Promise(r => setTimeout(r, 300)); // petit délai UX
-
-  const intention = detecterIntention(text);
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  // ── CONSULTATION ──
-  if (intention === 'list') {
-    const dates = datesConsultation(text);
-    if (!dates || dates.length === 0) {
-      showResponse('Pour quelle date souhaitez-vous consulter votre agenda ?', true);
-      updateMicUI('idle'); return;
-    }
-    const evs = allEvents.filter(e => dates.includes(e.date)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
-    if (evs.length === 0) {
-      const label = dates.length > 1 ? 'cette période' : new Date(dates[0]+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-      showResponse(`Rien de prévu pour ${label}. 📭`, true);
-    } else {
-      const lines = evs.map(e => {
-        const d = new Date(e.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
-        return `• ${d}${e.time ? ' à '+e.time : ''} — ${e.title}`;
-      }).join('\n');
-      showResponse(`Voici vos événements :\n\n${lines}`, true);
-    }
-    updateMicUI('idle'); return;
-  }
-
-  // ── SUPPRESSION ──
-  if (intention === 'delete') {
-    const t = normalise(text);
-    const match = allEvents.find(e => t.includes(normalise(e.title).substring(0,6)));
-    if (match) {
-      await deleteEvent(match.id);
-      showResponse(`✅ "${match.title}" supprimé de votre agenda.`, true);
-    } else {
-      showResponse('Je n\'ai pas trouvé cet événement. Précisez le nom ou la date.', true);
-    }
-    updateMicUI('idle'); return;
-  }
-
-  // ── AJOUT ──
-  if (intention === 'add') {
-    const date = resoudreDate(text);
-    const time = resoudreHeure(text);
-    const titre = extraireTitre(text);
-
-    if (!date) {
-      showResponse('Pour quel jour souhaitez-vous ce rendez-vous ?', true);
-      updateMicUI('idle'); return;
-    }
-    if (!titre || titre.length < 2) {
-      showResponse('Quel est l\'objet de ce rendez-vous ?', true);
-      updateMicUI('idle'); return;
-    }
-
-    await addEvent({ title: titre, date, time, note:'', urgent:false, deadline:false });
-
-    // Naviguer vers la semaine de l'événement
-    const evDate = new Date(date+'T12:00');
-    const mondayNow = getMonday(0);
-    const diff = Math.floor((evDate - mondayNow) / (7*24*3600*1000));
-    if (diff !== currentWeekOffset) { currentWeekOffset = diff; renderAgenda(); }
-
-    const dateLabel = evDate.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-    showResponse(`✅ Noté ! "${titre}" ajouté le ${dateLabel}${time ? ' à '+time : ''}.`, true);
-    toast('✅ Événement ajouté !');
-    updateMicUI('idle'); return;
-  }
-
-  // ── INCOMPRIS ──
-  showResponse('Je n\'ai pas bien compris. Essayez par exemple :\n\n• "Réunion lundi à 10h"\n• "Qu\'ai-je demain ?"\n• "Supprime la réunion de mardi"', true);
-  updateMicUI('idle');
-}
-
-function showResponse(text, isNormal) {
-  const el = document.getElementById('responseBubble');
-  el.innerHTML = text.replace(/\n/g,'<br>');
-  el.className = 'response-bubble' + (isNormal ? '' : ' empty');
-}
-
-// ─── HEADER DATE ─────────────────────────────────────────
-function updateHeaderDate() {
-  const now = new Date();
-  document.getElementById('headerDate').innerHTML =
-    now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) +
-    '<br>' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-}
-
-// ─── INIT ─────────────────────────────────────────────────
-async function init() {
-  allEvents = await loadEvents();
-  renderAgenda();
-  updateHeaderDate();
-  setInterval(updateHeaderDate, 30000);
-
-  // Add a sample P.E.C event if empty
-  if (allEvents.length === 0) {
-    const june30 = '2026-06-30';
-    await addEvent({ title:'Présentation jury Finance Innovation', date: june30, time:'09:00', note:'Bourse de Paris — Labellisation P.E.C', urgent:true, deadline:false });
-    currentWeekOffset = Math.floor((new Date(june30+'T12:00') - getMonday(0)) / (7*24*3600*1000));
-    renderAgenda();
-  }
-}
-
-init();
-
-// ─── SERVICE WORKER (PWA) ────────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('PWA: Service Worker enregistré'))
-      .catch(e => console.log('PWA: SW erreur', e));
+    grid.appendChild(col);
   });
 }
 
-// ─── BOUTON INSTALLATION PWA ────────────────────────────
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Afficher bouton d'installation
-  const btn = document.getElementById('installBtn');
-  if (btn) btn.style.display = 'flex';
-});
+function shiftWeek(n){weekBase.setDate(weekBase.getDate()+n*7);render();}
 
-window.addEventListener('appinstalled', () => {
-  toast('✅ Agenda installé sur votre écran d\'accueil !');
-  const btn = document.getElementById('installBtn');
-  if (btn) btn.style.display = 'none';
-  deferredPrompt = null;
-});
-
-function installPWA() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(choice => {
-      if (choice.outcome === 'accepted') toast('Installation en cours…');
-      deferredPrompt = null;
-    });
+function delEvt(id){
+  if(confirm('Supprimer cet événement ?')){
+    events=events.filter(e=>e.id!==id);
+    save(events);render();
   }
 }
+
+// ── STATUS ────────────────────────────────────────────────────────────────
+let statusTimer=null;
+function setStatus(msg,type=''){
+  const el=document.getElementById('status-bar');
+  el.textContent=msg;el.className=type;
+  if(statusTimer)clearTimeout(statusTimer);
+  if(type==='success'||type==='error')statusTimer=setTimeout(()=>{el.textContent='Appuyez sur le micro pour parler';el.className='';},4000);
+}
+
+// ── VOICE ─────────────────────────────────────────────────────────────────
+function initSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){setStatus('Reconnaissance vocale non disponible','error');return false;}
+  recognition=new SR();
+  recognition.lang='fr-FR';
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.onresult=(e)=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join(' ');
+    showTranscript(t);
+  };
+  recognition.onend=()=>setMicState(false);
+  recognition.onerror=(e)=>{
+    setMicState(false);
+    if(e.error==='not-allowed')setStatus('Microphone non autorisé. Tapez votre demande ci-dessous.','error');
+    else if(e.error!=='no-speech')setStatus('Erreur : '+e.error,'error');
+  };
+  return true;
+}
+
+function toggleMic(){
+  if(!recognition&&!initSpeech())return;
+  if(listening){recognition.stop();setMicState(false);}
+  else{
+    clearConfirm();
+    document.getElementById('transcript').classList.remove('visible');
+    try{recognition.start();setMicState(true);setStatus('J\'écoute…','listening');}
+    catch(e){setStatus('Impossible de démarrer le micro','error');}
+  }
+}
+
+function setMicState(val){
+  listening=val;
+  document.getElementById('mic-btn').classList.toggle('listening',val);
+  document.getElementById('mic-ring').classList.toggle('active',val);
+  if(!val&&document.getElementById('status-bar').textContent==='J\'écoute…')
+    setStatus('Appuyez sur le micro pour parler');
+}
+
+function showTranscript(text){
+  const el=document.getElementById('transcript');
+  el.textContent='"'+text+'"';
+  el.classList.add('visible');
+}
+
+// ── PROCESS ───────────────────────────────────────────────────────────────
+recognition && (recognition.onend=()=>{
+  setMicState(false);
+  const el=document.getElementById('transcript');
+  if(el.classList.contains('visible')&&el.textContent.length>3){
+    const raw=el.textContent.replace(/^"|"$/g,'');
+    processText(raw);
+  }
+});
+
+function setupRecognitionEnd(){
+  if(!recognition)return;
+  recognition.onend=()=>{
+    setMicState(false);
+    const el=document.getElementById('transcript');
+    if(el.classList.contains('visible')&&el.textContent.length>3){
+      const raw=el.textContent.replace(/^"|"$/g,'');
+      processText(raw);
+    }
+  };
+}
+
+function processText(text){
+  const cmd=parseCmd(text);
+  if(cmd.type==='query'){handleQuery(text);return;}
+  pendingEvent=cmd;
+  document.getElementById('c-title').textContent=cmd.title;
+  document.getElementById('c-date').textContent=
+    fmtDate(cmd.date)+' à '+String(cmd.hour).padStart(2,'0')+'h'+String(cmd.minute).padStart(2,'0');
+  document.getElementById('confirm-area').classList.add('visible');
+}
+
+function confirmEvent(){
+  if(!pendingEvent)return;
+  events.push(pendingEvent);
+  save(events);
+  weekBase=new Date(pendingEvent.date+'T12:00:00');
+  render();
+  clearConfirm();
+  document.getElementById('transcript').classList.remove('visible');
+  setStatus('✓ Événement ajouté !','success');
+}
+
+function rejectEvent(){clearConfirm();document.getElementById('transcript').classList.remove('visible');}
+
+function clearConfirm(){
+  pendingEvent=null;
+  document.getElementById('confirm-area').classList.remove('visible');
+}
+
+// ── MANUAL ────────────────────────────────────────────────────────────────
+function manualAdd(){
+  const inp=document.getElementById('manual-input');
+  const val=inp.value.trim();
+  if(!val)return;
+  inp.value='';
+  showTranscript(val);
+  processText(val);
+}
+
+function quickAdd(text){
+  showTranscript(text);
+  processText(text);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+initSpeech();
+setupRecognitionEnd();
+render();
+
+// Update header time every minute
+setInterval(()=>{
+  const now=new Date();
+  document.getElementById('hdr-date').textContent=now.getDate()+' '+MOIS[now.getMonth()].slice(0,3)+' '+now.getFullYear();
+},60000);
 </script>
 </body>
 </html>
