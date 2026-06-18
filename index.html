@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -27,126 +28,108 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Ge
   display:flex;align-items:center;justify-content:space-between;
 }
 .logo-area{display:flex;align-items:center;gap:10px;}
-.logo-area img{width:36px;height:36px;}
 .logo-text{color:#fff;}
-.logo-text .name{font-size:16px;font-weight:700;letter-spacing:.5px;}
-.logo-text .sub{font-size:9px;color:#aaa;letter-spacing:2px;text-transform:uppercase;}
-.date-area{text-align:right;color:#aaa;font-size:11px;font-family:'Inter',sans-serif;}
-.date-area .day{color:var(--gold2);font-size:13px;font-weight:600;}
+.logo-text .name{font-size:17px;font-weight:700;letter-spacing:.5px;}
+.logo-text .sub{font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase;}
+.date-area{text-align:right;color:#aaa;font-size:12px;font-family:'Inter',sans-serif;}
+.date-area .day{color:var(--gold2);font-size:14px;font-weight:600;}
 
 /* WEEK NAV */
 #week-nav{
   background:var(--dark2);padding:10px 16px;
   display:flex;align-items:center;justify-content:space-between;
 }
-.nav-btn{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;}
-#week-range{color:#fff;font-size:14px;font-weight:600;text-align:center;}
+.nav-btn{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;font-family:inherit;}
+#week-range{color:#fff;font-size:15px;font-weight:600;text-align:center;line-height:1.3;}
 
-/* WEEK GRID */
-#week-grid{display:grid;grid-template-columns:repeat(7,1fr);background:var(--bg3);border-bottom:2px solid var(--gold);}
-.day-col{border-right:1px solid var(--border);padding-bottom:8px;}
+/* VIEW TOGGLE */
+#view-toggle{
+  display:flex;background:var(--bg3);border-bottom:2px solid var(--gold);
+}
+.view-btn{flex:1;padding:8px;font-size:12px;text-align:center;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;border:none;background:none;letter-spacing:.5px;}
+.view-btn.active{background:var(--dark);color:#fff;font-weight:700;}
+
+/* 3-DAY GRID */
+#day-grid{display:grid;grid-template-columns:repeat(3,1fr);background:var(--bg3);}
+.day-col{border-right:1px solid var(--border);padding-bottom:12px;}
 .day-col:last-child{border-right:none;}
-.day-header{text-align:center;padding:8px 2px 6px;border-bottom:1px solid var(--border);}
-.day-header .lbl{font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;font-family:'Inter',sans-serif;}
-.day-header .num{font-size:17px;color:var(--text2);margin-top:2px;}
-.day-header.today .num{width:28px;height:28px;background:var(--dark);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
-.evts{padding:3px 2px;display:flex;flex-direction:column;gap:2px;}
-.evt{border-radius:4px;padding:3px 4px;font-size:9px;line-height:1.3;border-left:2px solid;cursor:pointer;}
-.evt-time{font-weight:700;margin-bottom:1px;font-family:'Inter',sans-serif;}
-.evt-title{font-weight:400;word-break:break-word;}
+.day-header{text-align:center;padding:10px 4px 8px;border-bottom:2px solid var(--border);margin-bottom:6px;}
+.day-header .lbl{font-size:11px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;font-family:'Inter',sans-serif;}
+.day-header .num{font-size:22px;color:var(--text2);margin-top:3px;font-weight:300;}
+.day-col.today .day-header{border-bottom-color:var(--gold);}
+.day-col.today .day-header .num{
+  width:36px;height:36px;background:var(--dark);color:#fff;
+  border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;margin:3px auto 0;
+}
+.evts{padding:0 6px;display:flex;flex-direction:column;gap:5px;}
+.evt{
+  border-radius:8px;padding:7px 8px;
+  border-left:4px solid;cursor:pointer;
+  transition:opacity .15s;
+}
+.evt:active{opacity:.6;}
+.evt-time{font-weight:700;font-family:'Inter',sans-serif;font-size:12px;margin-bottom:3px;}
+.evt-title{font-size:13px;line-height:1.3;word-break:break-word;}
+
+/* AGENDA VIEW */
+#agenda-view{display:none;padding:12px 16px;}
+.agenda-day{margin-bottom:16px;}
+.agenda-day-header{font-size:13px;font-weight:700;color:var(--dark2);letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);font-family:'Inter',sans-serif;}
+.agenda-day-header.today-lbl{color:var(--dark);font-size:14px;}
+.agenda-evt{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--bg2);border-radius:10px;padding:10px 12px;
+  margin-bottom:6px;border-left:4px solid;
+}
+.agenda-time{font-size:13px;font-weight:700;font-family:'Inter',sans-serif;flex-shrink:0;padding-top:1px;}
+.agenda-title{font-size:15px;line-height:1.3;}
+.no-evts{color:var(--text3);font-size:13px;font-style:italic;padding:4px 0;}
 
 /* BOTTOM */
-#bottom{background:var(--bg2);border-top:2px solid var(--gold);padding:16px 16px calc(env(safe-area-inset-bottom,0px)+16px);}
-
-#status-bar{
-  text-align:center;font-size:12px;color:var(--text3);
-  margin-bottom:14px;font-family:'Inter',sans-serif;
-  min-height:18px;
-}
+#bottom{background:var(--bg2);border-top:2px solid var(--gold);padding:14px 16px calc(env(safe-area-inset-bottom,0px)+14px);}
+#status-bar{text-align:center;font-size:13px;color:var(--text3);margin-bottom:12px;font-family:'Inter',sans-serif;min-height:20px;}
 #status-bar.listening{color:var(--dark2);font-weight:600;}
 #status-bar.success{color:#2D6A4F;font-weight:600;}
 #status-bar.error{color:#c0392b;}
 
-/* MIC BUTTON */
-#mic-wrap{display:flex;justify-content:center;margin-bottom:16px;position:relative;}
-#mic-ring{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:90px;height:90px;border-radius:50%;
-  border:2px solid var(--dark2);opacity:0;
-  display:none;
-}
+#mic-wrap{display:flex;justify-content:center;margin-bottom:14px;position:relative;}
+#mic-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90px;height:90px;border-radius:50%;border:2px solid var(--dark2);opacity:0;display:none;}
 #mic-ring.active{display:block;animation:ring 1.2s ease-out infinite;}
 @keyframes ring{0%{transform:translate(-50%,-50%) scale(1);opacity:.6;}100%{transform:translate(-50%,-50%) scale(1.8);opacity:0;}}
-#mic-btn{
-  width:72px;height:72px;border-radius:50%;
-  background:var(--dark);border:none;color:#fff;
-  font-size:28px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;position:relative;z-index:1;
-  box-shadow:0 4px 15px rgba(27,58,45,.3);
-}
-#mic-btn.listening{background:var(--dark2);transform:scale(1.05);}
-#mic-btn.listening::after{
-  content:'';position:absolute;inset:-4px;border-radius:50%;
-  border:2px solid var(--gold);animation:pulse-border 1s ease-in-out infinite;
-}
+#mic-btn{width:68px;height:68px;border-radius:50%;background:var(--dark);border:none;color:#fff;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;z-index:1;box-shadow:0 4px 15px rgba(27,58,45,.3);}
+#mic-btn.listening{background:var(--dark2);}
+#mic-btn.listening::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--gold);animation:pulse-border 1s ease-in-out infinite;}
 @keyframes pulse-border{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* TRANSCRIPT */
-#transcript{
-  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 14px;font-size:13px;color:var(--text);line-height:1.5;
-  min-height:42px;margin-bottom:12px;font-style:italic;
-  display:none;
-}
+#transcript{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:14px;color:var(--text);line-height:1.5;min-height:44px;margin-bottom:12px;font-style:italic;display:none;}
 #transcript.visible{display:block;}
 
-/* CONFIRM */
 #confirm-area{display:none;margin-bottom:12px;}
 #confirm-area.visible{display:block;}
-.confirm-card{
-  background:var(--dark);color:#fff;border-radius:var(--radius);
-  padding:12px 16px;margin-bottom:10px;
-}
-.confirm-card .ctitle{font-size:15px;font-weight:700;margin-bottom:4px;}
-.confirm-card .cdate{font-size:12px;color:var(--gold2);font-family:'Inter',sans-serif;}
+.confirm-card{background:var(--dark);color:#fff;border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;}
+.confirm-card .ctitle{font-size:16px;font-weight:700;margin-bottom:4px;}
+.confirm-card .cdate{font-size:13px;color:var(--gold2);font-family:'Inter',sans-serif;}
 .confirm-btns{display:flex;gap:8px;}
-#btn-confirm{flex:1;background:var(--gold);color:var(--dark);border:none;border-radius:8px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;}
-#btn-reject{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:11px 16px;font-size:13px;cursor:pointer;font-family:inherit;}
+#btn-confirm{flex:1;background:var(--gold);color:var(--dark);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;}
+#btn-reject{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer;font-family:inherit;}
 
-/* MANUAL */
-#manual-area{display:flex;gap:8px;margin-top:4px;}
-#manual-input{
-  flex:1;background:var(--bg3);border:1px solid var(--border);
-  border-radius:8px;padding:10px 12px;color:var(--text);
-  font-size:13px;font-family:inherit;outline:none;
-}
-#manual-input:focus{border-color:var(--dark2);}
-#manual-input::placeholder{color:var(--text3);}
-#manual-send{
-  background:var(--dark);color:#fff;border:none;
-  border-radius:8px;padding:10px 16px;font-size:16px;cursor:pointer;
-}
-
-/* QUICK CHIPS */
-#chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
-.chip{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:20px;padding:5px 12px;font-size:11px;
-  color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;
-  white-space:nowrap;
-}
+#chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;}
 .chip:active{background:var(--dark);color:#fff;border-color:var(--dark);}
 
-/* MODAL DELETE */
-.evt:active{opacity:.7;}
+#manual-area{display:flex;gap:8px;}
+#manual-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;}
+#manual-input:focus{border-color:var(--dark2);}
+#manual-input::placeholder{color:var(--text3);}
+#manual-send{background:var(--dark);color:#fff;border:none;border-radius:8px;padding:11px 18px;font-size:17px;cursor:pointer;}
 </style>
 </head>
 <body>
 <div id="app">
   <div id="header">
     <div class="logo-area">
-      <svg width="36" height="36" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="#2D6A4F"/><text x="50" y="68" text-anchor="middle" font-size="52">🌳</text></svg>
+      <svg width="34" height="34" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="#2D6A4F"/><text x="50" y="68" text-anchor="middle" font-size="52">🌳</text></svg>
       <div class="logo-text">
         <div class="name">Agenda Vocal</div>
         <div class="sub">FINEBLOCK · P.E.C</div>
@@ -159,184 +142,134 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Ge
   </div>
 
   <div id="week-nav">
-    <button class="nav-btn" onclick="shiftWeek(-1)">◀ Préc.</button>
+    <button class="nav-btn" onclick="shiftPeriod(-1)">◀</button>
     <div id="week-range"></div>
-    <button class="nav-btn" onclick="shiftWeek(1)">Suiv. ▶</button>
+    <button class="nav-btn" onclick="shiftPeriod(1)">▶</button>
   </div>
 
-  <div id="week-grid"></div>
+  <div id="view-toggle">
+    <button class="view-btn active" id="vbtn-3j" onclick="setView('3j')">3 JOURS</button>
+    <button class="view-btn" id="vbtn-sem" onclick="setView('sem')">SEMAINE</button>
+    <button class="view-btn" id="vbtn-agenda" onclick="setView('agenda')">AGENDA</button>
+  </div>
+
+  <div id="day-grid"></div>
+  <div id="agenda-view"></div>
 
   <div id="bottom">
     <div id="status-bar">Appuyez sur le micro pour parler</div>
-
     <div id="mic-wrap">
       <div id="mic-ring"></div>
       <button id="mic-btn" onclick="toggleMic()">🎙</button>
     </div>
-
     <div id="chips">
       <div class="chip" onclick="quickAdd('Réunion lundi 14h')">+ Réunion lundi 14h</div>
       <div class="chip" onclick="quickAdd('Demain ?')">Demain ?</div>
-      <div class="chip" onclick="quickAdd('Cette semaine ?')">Cette semaine ?</div>
-      <div class="chip" onclick="quickAdd('Jury Finance Innovation novembre 2026 10h')">Jury Finance Innovation</div>
+      <div class="chip" onclick="quickAdd('Jury Finance Innovation 10 novembre 10h')">Jury Nov.</div>
     </div>
-
     <div id="transcript"></div>
-
     <div id="confirm-area">
       <div class="confirm-card">
         <div class="ctitle" id="c-title"></div>
         <div class="cdate" id="c-date"></div>
       </div>
       <div class="confirm-btns">
-        <button id="btn-reject" onclick="rejectEvent()">✕ Annuler</button>
+        <button id="btn-reject" onclick="rejectEvent()">✕</button>
         <button id="btn-confirm" onclick="confirmEvent()">✓ Ajouter</button>
       </div>
     </div>
-
     <div id="manual-area">
-      <input id="manual-input" type="text" placeholder='Ex : "Réunion vendredi 10h avec Eric"'
-        onkeydown="if(event.key==='Enter')manualAdd()"/>
+      <input id="manual-input" type="text" placeholder='Ex : "Réunion vendredi 10h avec Eric"' onkeydown="if(event.key==='Enter')manualAdd()"/>
       <button id="manual-send" onclick="manualAdd()">→</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONSTANTS ─────────────────────────────────────────────────────────────
 const JOURS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 const JOURS_FULL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
 const MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const MOIS_SHORT=['jan','fév','mar','avr','mai','jun','juil','aoû','sep','oct','nov','déc'];
 const COLORS=['#2D6A4F','#E76F51','#264653','#8338EC','#E9C46A','#2A9D8F','#F4A261','#40916C','#E63946','#457B9D'];
 
-// ── STATE ─────────────────────────────────────────────────────────────────
 function load(){try{return JSON.parse(localStorage.getItem('fb_agenda')||'[]');}catch(e){return[];}}
 function save(e){try{localStorage.setItem('fb_agenda',JSON.stringify(e));}catch(e){}}
 let events=load();
-let weekBase=new Date();
+let baseDate=new Date();
+let currentView='3j';
 let recognition=null;
 let listening=false;
 let pendingEvent=null;
 
-// ── DATE HELPERS ──────────────────────────────────────────────────────────
 function toDS(d){return d.toISOString().split('T')[0];}
-function weekDates(base){
-  const d=new Date(base),day=d.getDay(),mon=new Date(d);
-  mon.setDate(d.getDate()-(day===0?6:day-1));
-  return Array.from({length:7},(_,i)=>{const nd=new Date(mon);nd.setDate(mon.getDate()+i);return nd;});
-}
 function fmtDate(ds){
   const d=new Date(ds+'T12:00:00');
   return JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear();
 }
 
-// ── PARSE ─────────────────────────────────────────────────────────────────
-function parseCmd(text){
-  const t=text.toLowerCase().trim();
-  
-  // Query?
-  if(t.match(/qu['']?[aà]/)||t.includes('programme')||t.includes('agenda')||t.includes('prévu')||t.match(/demain\s*\?/)||t.match(/semaine\s*\?/)){
-    return{type:'query',text};
-  }
-
-  // Parse time
-  let hour=9,minute=0;
-  const tm=t.match(/(\d{1,2})\s*h\s*(\d{0,2})/);
-  if(tm){hour=parseInt(tm[1]);minute=tm[2]?parseInt(tm[2])||0:0;}
-
-  // Parse date
-  let date=new Date();
-  if(t.includes('demain'))date.setDate(date.getDate()+1);
-  else if(t.includes('après-demain')||t.includes('apres-demain'))date.setDate(date.getDate()+2);
-  else{
-    for(let i=0;i<7;i++){
-      if(t.includes(JOURS_FULL[i])){
-        const nd=new Date();
-        while(nd.getDay()!==i)nd.setDate(nd.getDate()+1);
-        date=nd;break;
-      }
-    }
-    // Check for month dates like "18 juin", "30 novembre"
-    for(let i=0;i<12;i++){
-      const rx=new RegExp('(\\d{1,2})\\s+'+MOIS_SHORT[i]);
-      const mx=t.match(rx);
-      if(mx){
-        date=new Date();
-        date.setMonth(i);
-        date.setDate(parseInt(mx[1]));
-        if(date<new Date()&&!t.includes('aujourd'))date.setFullYear(date.getFullYear()+1);
-        break;
-      }
-    }
-  }
-
-  // Clean title
-  let title=text
-    .replace(/merci\s+de\s+(noter|ajouter|enregistrer)|notez|note[sz]?|ajoute[zr]?|rappel[- ]?moi|s'il vous plaît|stp|svp/gi,'')
-    .replace(/un\s+rendez-vous|rendez-vous|un\s+rdv\b|une\s+réunion|un\s+appel/gi,(m)=>m.includes('réunion')?'Réunion':m.includes('appel')?'Appel':'RDV')
-    .replace(/aujourd'?hui|demain|après-demain|apres-demain/gi,'')
-    .replace(new RegExp(JOURS_FULL.join('|'),'gi'),'')
-    .replace(new RegExp(MOIS_SHORT.map(m=>m+'\\b').join('|'),'gi'),'')
-    .replace(/(\d{1,2})\s*h\s*(\d{0,2})/gi,'')
-    .replace(/à\s+\d{1,2}\s*heures?/gi,'')
-    .replace(/ce\s+(matin|soir|après-midi|jour)/gi,'')
-    .replace(/cet?\s+après-midi/gi,'')
-    .replace(/\d{1,2}\s+/g,' ')
-    .replace(/\s+/g,' ').trim();
-
-  if(!title||title.length<2)title=text.replace(/(\d{1,2}h\d{0,2})/g,'').trim()||'Événement';
-
-  return{
-    type:'add',
-    id:Date.now(),
-    title,
-    date:toDS(date),
-    hour,minute,
-    color:COLORS[Math.floor(Math.random()*COLORS.length)]
-  };
+// ── VIEWS ─────────────────────────────────────────────────────────────────
+function setView(v){
+  currentView=v;
+  ['3j','sem','agenda'].forEach(x=>{
+    document.getElementById('vbtn-'+x).classList.toggle('active',x===v);
+  });
+  render();
 }
 
-function handleQuery(text){
-  const t=text.toLowerCase();
-  let d=new Date();
-  if(t.includes('demain'))d.setDate(d.getDate()+1);
-  const ds=toDS(d);
-  const evts=events.filter(e=>e.date===ds);
-  if(evts.length===0){
-    setStatus(t.includes('demain')?'Rien de prévu demain.':'Rien de prévu aujourd\'hui.','success');
+function shiftPeriod(n){
+  const step=currentView==='sem'?7:currentView==='3j'?3:7;
+  baseDate.setDate(baseDate.getDate()+n*step);
+  render();
+}
+
+function getDates(){
+  if(currentView==='3j'){
+    return Array.from({length:3},(_,i)=>{const d=new Date(baseDate);d.setDate(baseDate.getDate()+i);return d;});
   }else{
-    const list=evts.sort((a,b)=>a.hour-b.hour).map(e=>`${String(e.hour).padStart(2,'0')}h${String(e.minute).padStart(2,'0')} — ${e.title}`).join('\n');
-    setStatus(list,'success');
+    const d=new Date(baseDate),day=d.getDay(),mon=new Date(d);
+    mon.setDate(d.getDate()-(day===0?6:day-1));
+    return Array.from({length:7},(_,i)=>{const nd=new Date(mon);nd.setDate(mon.getDate()+i);return nd;});
   }
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────
 function render(){
   const now=new Date();
-  const days=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-  document.getElementById('hdr-day').textContent=days[now.getDay()].charAt(0).toUpperCase()+days[now.getDay()].slice(1);
+  const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  document.getElementById('hdr-day').textContent=dayNames[now.getDay()];
   document.getElementById('hdr-date').textContent=now.getDate()+' '+MOIS[now.getMonth()].slice(0,3)+' '+now.getFullYear();
 
-  const dates=weekDates(weekBase);
-  const today=toDS(new Date());
-  const d0=dates[0],d6=dates[6];
-  document.getElementById('week-range').textContent=
-    d0.getDate()+' '+MOIS[d0.getMonth()].slice(0,4)+' – '+d6.getDate()+' '+MOIS[d6.getMonth()].slice(0,4)+'\n'+d0.getFullYear();
+  const grid=document.getElementById('day-grid');
+  const agv=document.getElementById('agenda-view');
 
-  const grid=document.getElementById('week-grid');
+  if(currentView==='agenda'){
+    grid.style.display='none';
+    agv.style.display='block';
+    renderAgenda(agv);
+    document.getElementById('week-range').textContent='7 prochains jours';
+    return;
+  }
+
+  agv.style.display='none';
+  grid.style.display='grid';
+  grid.style.gridTemplateColumns=currentView==='3j'?'repeat(3,1fr)':'repeat(7,1fr)';
+
+  const dates=getDates();
+  const today=toDS(new Date());
+  const d0=dates[0],dl=dates[dates.length-1];
+  document.getElementById('week-range').textContent=
+    d0.getDate()+' '+MOIS[d0.getMonth()].slice(0,3)+' – '+dl.getDate()+' '+MOIS[dl.getMonth()].slice(0,3);
+
   grid.innerHTML='';
   dates.forEach(d=>{
     const ds=toDS(d);
     const isToday=ds===today;
     const dayEvts=events.filter(e=>e.date===ds).sort((a,b)=>a.hour*60+a.minute-(b.hour*60+b.minute));
     const col=document.createElement('div');
-    col.className='day-col';
-    const numHtml=isToday?`<div class="num today">${d.getDate()}</div>`:`<div class="num">${d.getDate()}</div>`;
+    col.className='day-col'+(isToday?' today':'');
     col.innerHTML=`
-      <div class="day-header ${isToday?'today':''}">
+      <div class="day-header">
         <div class="lbl">${JOURS[d.getDay()]}</div>
-        ${isToday?`<div class="num" style="width:28px;height:28px;background:#1B3A2D;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin:0 auto;">${d.getDate()}</div>`:`<div class="num">${d.getDate()}</div>`}
+        <div class="num">${d.getDate()}</div>
       </div>
       <div class="evts">${dayEvts.map(ev=>`
         <div class="evt" style="background:${ev.color}18;border-left-color:${ev.color}" onclick="delEvt(${ev.id})">
@@ -348,22 +281,74 @@ function render(){
   });
 }
 
-function shiftWeek(n){weekBase.setDate(weekBase.getDate()+n*7);render();}
-
-function delEvt(id){
-  if(confirm('Supprimer cet événement ?')){
-    events=events.filter(e=>e.id!==id);
-    save(events);render();
+function renderAgenda(container){
+  container.innerHTML='';
+  const today=toDS(new Date());
+  for(let i=0;i<14;i++){
+    const d=new Date();d.setDate(d.getDate()+i);
+    const ds=toDS(d);
+    const dayEvts=events.filter(e=>e.date===ds).sort((a,b)=>a.hour*60+a.minute-(b.hour*60+b.minute));
+    const div=document.createElement('div');
+    div.className='agenda-day';
+    const isToday=ds===today;
+    div.innerHTML=`<div class="agenda-day-header ${isToday?'today-lbl':''}">${isToday?'AUJOURD\'HUI — ':''} ${JOURS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]}</div>
+    ${dayEvts.length?dayEvts.map(ev=>`
+      <div class="agenda-evt" style="border-left-color:${ev.color};background:${ev.color}10" onclick="delEvt(${ev.id})">
+        <div class="agenda-time" style="color:${ev.color}">${String(ev.hour).padStart(2,'0')}h${String(ev.minute).padStart(2,'0')}</div>
+        <div class="agenda-title">${ev.title}</div>
+      </div>`).join(''):'<div class="no-evts">Rien de prévu</div>'}`;
+    container.appendChild(div);
   }
 }
 
-// ── STATUS ────────────────────────────────────────────────────────────────
-let statusTimer=null;
-function setStatus(msg,type=''){
-  const el=document.getElementById('status-bar');
-  el.textContent=msg;el.className=type;
-  if(statusTimer)clearTimeout(statusTimer);
-  if(type==='success'||type==='error')statusTimer=setTimeout(()=>{el.textContent='Appuyez sur le micro pour parler';el.className='';},4000);
+function delEvt(id){
+  if(confirm('Supprimer ?')){events=events.filter(e=>e.id!==id);save(events);render();}
+}
+
+// ── PARSE ─────────────────────────────────────────────────────────────────
+function parseCmd(text){
+  const t=text.toLowerCase().trim();
+  if(t.match(/qu['']?[aà]/)||t.includes('programme')||t.includes('agenda')||t.includes('prévu')||t.match(/demain\s*[\?$]/)||t.match(/semaine\s*[\?$]/)){
+    return{type:'query',text};
+  }
+  let hour=9,minute=0;
+  const tm=t.match(/(\d{1,2})\s*h\s*(\d{0,2})/);
+  if(tm){hour=parseInt(tm[1]);minute=tm[2]?parseInt(tm[2])||0:0;}
+  let date=new Date();
+  if(t.includes('demain'))date.setDate(date.getDate()+1);
+  else if(t.includes('après-demain')||t.includes('apres-demain'))date.setDate(date.getDate()+2);
+  else{
+    for(let i=0;i<7;i++){
+      if(t.includes(JOURS_FULL[i])){const nd=new Date();while(nd.getDay()!==i)nd.setDate(nd.getDate()+1);date=nd;break;}
+    }
+    for(let i=0;i<12;i++){
+      const rx=new RegExp('(\\d{1,2})\\s+'+MOIS_SHORT[i]);
+      const mx=t.match(rx);
+      if(mx){date=new Date();date.setMonth(i);date.setDate(parseInt(mx[1]));if(date<new Date())date.setFullYear(date.getFullYear()+1);break;}
+    }
+  }
+  let title=text
+    .replace(/merci\s+de\s+(noter|ajouter|enregistrer)|notez?|ajoute[zr]?|rappel[- ]?moi|s'il vous plaît|stp|svp/gi,'')
+    .replace(/un\s+rendez-vous|rendez-vous|un\s+rdv\b|une\s+réunion|un\s+appel/gi,(m)=>m.includes('réunion')?'Réunion':m.includes('appel')?'Appel':'RDV')
+    .replace(/aujourd'?hui|demain|après-demain|apres-demain/gi,'')
+    .replace(new RegExp(JOURS_FULL.join('|'),'gi'),'')
+    .replace(new RegExp(MOIS_SHORT.map(m=>m+'\\b').join('|'),'gi'),'')
+    .replace(/(\d{1,2})\s*h\s*(\d{0,2})/gi,'')
+    .replace(/à\s+\d{1,2}\s*heures?/gi,'')
+    .replace(/ce\s+(matin|soir|après-midi|jour)|cet?\s+après-midi/gi,'')
+    .replace(/\s+/g,' ').trim();
+  if(!title||title.length<2)title=text.replace(/(\d{1,2}h\d{0,2})/g,'').trim()||'Événement';
+  return{type:'add',id:Date.now(),title,date:toDS(date),hour,minute,color:COLORS[Math.floor(Math.random()*COLORS.length)]};
+}
+
+function handleQuery(text){
+  const t=text.toLowerCase();
+  let d=new Date();
+  if(t.includes('demain'))d.setDate(d.getDate()+1);
+  const ds=toDS(d);
+  const evts=events.filter(e=>e.date===ds);
+  if(evts.length===0){setStatus(t.includes('demain')?'Rien de prévu demain.':'Rien de prévu aujourd\'hui.','success');}
+  else{setStatus(evts.sort((a,b)=>a.hour-b.hour).map(e=>`${String(e.hour).padStart(2,'0')}h — ${e.title}`).join(' · '),'success');}
 }
 
 // ── VOICE ─────────────────────────────────────────────────────────────────
@@ -378,10 +363,16 @@ function initSpeech(){
     const t=Array.from(e.results).map(r=>r[0].transcript).join(' ');
     showTranscript(t);
   };
-  recognition.onend=()=>setMicState(false);
+  recognition.onend=()=>{
+    setMicState(false);
+    const el=document.getElementById('transcript');
+    if(el.classList.contains('visible')&&el.textContent.length>3){
+      processText(el.textContent.replace(/^"|"$/g,''));
+    }
+  };
   recognition.onerror=(e)=>{
     setMicState(false);
-    if(e.error==='not-allowed')setStatus('Microphone non autorisé. Tapez votre demande ci-dessous.','error');
+    if(e.error==='not-allowed')setStatus('Microphone non autorisé. Tapez ci-dessous.','error');
     else if(e.error!=='no-speech')setStatus('Erreur : '+e.error,'error');
   };
   return true;
@@ -391,8 +382,7 @@ function toggleMic(){
   if(!recognition&&!initSpeech())return;
   if(listening){recognition.stop();setMicState(false);}
   else{
-    clearConfirm();
-    document.getElementById('transcript').classList.remove('visible');
+    clearConfirm();document.getElementById('transcript').classList.remove('visible');
     try{recognition.start();setMicState(true);setStatus('J\'écoute…','listening');}
     catch(e){setStatus('Impossible de démarrer le micro','error');}
   }
@@ -402,36 +392,12 @@ function setMicState(val){
   listening=val;
   document.getElementById('mic-btn').classList.toggle('listening',val);
   document.getElementById('mic-ring').classList.toggle('active',val);
-  if(!val&&document.getElementById('status-bar').textContent==='J\'écoute…')
-    setStatus('Appuyez sur le micro pour parler');
+  if(!val&&document.getElementById('status-bar').textContent==='J\'écoute…')setStatus('Appuyez sur le micro pour parler');
 }
 
 function showTranscript(text){
   const el=document.getElementById('transcript');
-  el.textContent='"'+text+'"';
-  el.classList.add('visible');
-}
-
-// ── PROCESS ───────────────────────────────────────────────────────────────
-recognition && (recognition.onend=()=>{
-  setMicState(false);
-  const el=document.getElementById('transcript');
-  if(el.classList.contains('visible')&&el.textContent.length>3){
-    const raw=el.textContent.replace(/^"|"$/g,'');
-    processText(raw);
-  }
-});
-
-function setupRecognitionEnd(){
-  if(!recognition)return;
-  recognition.onend=()=>{
-    setMicState(false);
-    const el=document.getElementById('transcript');
-    if(el.classList.contains('visible')&&el.textContent.length>3){
-      const raw=el.textContent.replace(/^"|"$/g,'');
-      processText(raw);
-    }
-  };
+  el.textContent='"'+text+'"';el.classList.add('visible');
 }
 
 function processText(text){
@@ -439,54 +405,40 @@ function processText(text){
   if(cmd.type==='query'){handleQuery(text);return;}
   pendingEvent=cmd;
   document.getElementById('c-title').textContent=cmd.title;
-  document.getElementById('c-date').textContent=
-    fmtDate(cmd.date)+' à '+String(cmd.hour).padStart(2,'0')+'h'+String(cmd.minute).padStart(2,'0');
+  document.getElementById('c-date').textContent=fmtDate(cmd.date)+' à '+String(cmd.hour).padStart(2,'0')+'h'+String(cmd.minute).padStart(2,'0');
   document.getElementById('confirm-area').classList.add('visible');
 }
 
 function confirmEvent(){
   if(!pendingEvent)return;
-  events.push(pendingEvent);
-  save(events);
-  weekBase=new Date(pendingEvent.date+'T12:00:00');
-  render();
-  clearConfirm();
+  events.push(pendingEvent);save(events);
+  baseDate=new Date(pendingEvent.date+'T12:00:00');
+  render();clearConfirm();
   document.getElementById('transcript').classList.remove('visible');
   setStatus('✓ Événement ajouté !','success');
 }
 
 function rejectEvent(){clearConfirm();document.getElementById('transcript').classList.remove('visible');}
+function clearConfirm(){pendingEvent=null;document.getElementById('confirm-area').classList.remove('visible');}
 
-function clearConfirm(){
-  pendingEvent=null;
-  document.getElementById('confirm-area').classList.remove('visible');
-}
-
-// ── MANUAL ────────────────────────────────────────────────────────────────
 function manualAdd(){
   const inp=document.getElementById('manual-input');
-  const val=inp.value.trim();
-  if(!val)return;
-  inp.value='';
-  showTranscript(val);
-  processText(val);
+  const val=inp.value.trim();if(!val)return;
+  inp.value='';showTranscript(val);processText(val);
 }
 
-function quickAdd(text){
-  showTranscript(text);
-  processText(text);
+function quickAdd(text){showTranscript(text);processText(text);}
+
+let statusTimer=null;
+function setStatus(msg,type=''){
+  const el=document.getElementById('status-bar');
+  el.textContent=msg;el.className=type;
+  if(statusTimer)clearTimeout(statusTimer);
+  if(type==='success'||type==='error')statusTimer=setTimeout(()=>{el.textContent='Appuyez sur le micro pour parler';el.className='';},4000);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
 initSpeech();
-setupRecognitionEnd();
 render();
-
-// Update header time every minute
-setInterval(()=>{
-  const now=new Date();
-  document.getElementById('hdr-date').textContent=now.getDate()+' '+MOIS[now.getMonth()].slice(0,3)+' '+now.getFullYear();
-},60000);
 </script>
 </body>
 </html>
