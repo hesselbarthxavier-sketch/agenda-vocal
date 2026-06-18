@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Vocal — FINEBLOCK</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agenda PEC">
+<meta name="theme-color" content="#1A4A2E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --vert-baobab: #1A4A2E;
+    --or-savane:   #C8922A;
+    --creme:       #F7F3EC;
+    --brun-sol:    #3D2B1F;
+    --gris-clair:  #E8E2D9;
+    --blanc:       #FEFCF8;
+    --rouge-alerte:#B94040;
+    --vert-clair:  #2D7A4F;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--creme);
+    color: var(--brun-sol);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--vert-baobab);
+    color: var(--creme);
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--or-savane);
+  }
+  .logo-zone { display: flex; align-items: center; gap: 12px; }
+  .baobab-icon { font-size: 28px; line-height:1; }
+  .logo-text { line-height:1.1; }
+  .logo-text strong { font-family:'DM Serif Display', serif; font-size:18px; letter-spacing:.5px; }
+  .logo-text span { font-size:11px; opacity:.7; font-weight:300; letter-spacing:1.5px; text-transform:uppercase; }
+  .date-now { font-family:'DM Mono', monospace; font-size:13px; opacity:.8; text-align:right; line-height:1.4; }
+
+  /* LAYOUT */
+  .app { display:grid; grid-template-columns:1fr 340px; gap:0; height:calc(100vh - 70px); }
+
+  /* AGENDA PANEL */
+  .agenda-panel {
+    padding: 24px 28px;
+    overflow-y: auto;
+    border-right: 1px solid var(--gris-clair);
+  }
+
+  .week-nav {
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;
+  }
+  .week-nav h2 { font-family:'DM Serif Display', serif; font-size:22px; }
+  .btn-nav {
+    background:none; border:1.5px solid var(--gris-clair); border-radius:6px;
+    padding:6px 14px; cursor:pointer; font-size:16px; color:var(--brun-sol);
+    transition: all .2s;
+  }
+  .btn-nav:hover { border-color:var(--or-savane); color:var(--or-savane); }
+
+  .day-block { margin-bottom: 18px; }
+  .day-header {
+    display:flex; align-items:center; gap:10px; margin-bottom:8px;
+    padding-bottom:6px; border-bottom:1px solid var(--gris-clair);
+  }
+  .day-label {
+    font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase;
+    color: var(--vert-baobab); opacity:.7;
+  }
+  .day-date {
+    font-family:'DM Serif Display', serif; font-size:22px; color: var(--brun-sol);
+  }
+  .day-today .day-date { color: var(--or-savane); }
+  .today-badge {
+    font-size:10px; background:var(--or-savane); color:white;
+    padding:2px 8px; border-radius:20px; font-weight:600; letter-spacing:.5px;
+  }
+
+  .event-card {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-left: 4px solid var(--vert-clair);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    transition: box-shadow .2s;
+  }
+  .event-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  .event-card.urgent { border-left-color: var(--or-savane); }
+  .event-card.deadline { border-left-color: var(--rouge-alerte); }
+
+  .event-time {
+    font-family:'DM Mono', monospace; font-size:12px; color:var(--or-savane);
+    font-weight:500; white-space:nowrap; margin-top:2px;
+  }
+  .event-title { font-size:14px; font-weight:500; line-height:1.3; }
+  .event-note { font-size:12px; opacity:.6; margin-top:3px; }
+  .event-actions { display:flex; gap:6px; opacity:0; transition:.2s; }
+  .event-card:hover .event-actions { opacity:1; }
+  .btn-del { background:none; border:none; cursor:pointer; font-size:14px; padding:2px; opacity:.5; }
+  .btn-del:hover { opacity:1; color:var(--rouge-alerte); }
+
+  .empty-day { font-size:13px; opacity:.4; padding:6px 2px; font-style:italic; }
+
+  /* VOICE PANEL */
+  .voice-panel {
+    background: var(--blanc);
+    display:flex; flex-direction:column;
+    height: 100%;
+  }
+
+  .voice-header {
+    padding:20px 22px 14px;
+    border-bottom:1px solid var(--gris-clair);
+  }
+  .voice-header h3 { font-family:'DM Serif Display', serif; font-size:17px; margin-bottom:4px; }
+  .voice-header p { font-size:12px; opacity:.55; line-height:1.5; }
+
+  /* MIC BUTTON */
+  .mic-zone {
+    padding:24px 22px;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    border-bottom:1px solid var(--gris-clair);
+  }
+
+  .mic-btn {
+    width:80px; height:80px; border-radius:50%;
+    border:none; cursor:pointer;
+    background: var(--vert-baobab);
+    color: white; font-size:32px;
+    display:flex; align-items:center; justify-content:center;
+    transition: all .25s;
+    box-shadow: 0 4px 20px rgba(26,74,46,.25);
+    position:relative;
+  }
+  .mic-btn:hover { transform:scale(1.05); box-shadow:0 6px 28px rgba(26,74,46,.35); }
+  .mic-btn.listening {
+    background: var(--rouge-alerte);
+    animation: pulse-ring 1.2s infinite;
+  }
+  .mic-btn.processing { background: var(--or-savane); }
+
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(185,64,64,.4); }
+    70% { box-shadow: 0 0 0 20px rgba(185,64,64,0); }
+    100% { box-shadow: 0 0 0 0 rgba(185,64,64,0); }
+  }
+
+  .mic-status {
+    font-size:13px; font-weight:500; color:var(--brun-sol); opacity:.65;
+    text-align:center; min-height:20px;
+  }
+  .mic-status.active { color:var(--rouge-alerte); opacity:1; }
+  .mic-status.processing { color:var(--or-savane); opacity:1; }
+
+  /* TRANSCRIPT */
+  .transcript-zone {
+    padding:14px 22px;
+    border-bottom:1px solid var(--gris-clair);
+    min-height:70px;
+  }
+  .transcript-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; opacity:.5; margin-bottom:6px; font-weight:600; }
+  .transcript-text {
+    font-size:14px; line-height:1.5; color:var(--brun-sol);
+    font-style:italic; min-height:40px;
+  }
+  .transcript-text.interim { opacity:.5; }
+
+  /* RESPONSE */
+  .response-zone {
+    padding:14px 22px;
+    flex:1; overflow-y:auto;
+  }
+  .response-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; opacity:.5; margin-bottom:8px; font-weight:600; }
+  .response-bubble {
+    background: linear-gradient(135deg, var(--vert-baobab), #2D6B47);
+    color:white; border-radius:12px 12px 12px 4px;
+    padding:12px 16px; font-size:13px; line-height:1.6;
+    min-height:40px;
+  }
+  .response-bubble.empty { background:var(--gris-clair); color:var(--brun-sol); opacity:.6; font-style:italic; }
+
+  /* TEXT INPUT FALLBACK */
+  .text-fallback {
+    padding:14px 22px 18px;
+    border-top:1px solid var(--gris-clair);
+  }
+  .text-fallback label { font-size:11px; opacity:.5; letter-spacing:.5px; display:block; margin-bottom:6px; }
+  .text-input-row { display:flex; gap:8px; }
+  .text-input {
+    flex:1; padding:9px 12px; border:1.5px solid var(--gris-clair);
+    border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px;
+    background:var(--creme); color:var(--brun-sol); outline:none;
+    transition:border .2s;
+  }
+  .text-input:focus { border-color:var(--vert-baobab); }
+  .btn-send {
+    padding:9px 16px; background:var(--vert-baobab); color:white;
+    border:none; border-radius:8px; cursor:pointer; font-size:14px;
+    font-weight:600; transition:.2s;
+  }
+  .btn-send:hover { background:var(--vert-clair); }
+
+  /* EXAMPLES CHIP */
+  .examples { padding:0 22px 14px; display:flex; flex-wrap:wrap; gap:6px; }
+  .chip {
+    font-size:11px; padding:4px 10px; border-radius:20px;
+    background:var(--gris-clair); color:var(--brun-sol); cursor:pointer;
+    border:none; transition:.2s; font-family:'DM Sans',sans-serif;
+  }
+  .chip:hover { background:var(--vert-baobab); color:white; }
+
+  /* TOAST */
+  #toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--vert-baobab); color:white; padding:10px 22px;
+    border-radius:30px; font-size:13px; font-weight:500;
+    opacity:0; transition:opacity .3s; pointer-events:none;
+    z-index:99;
+  }
+  #toast.show { opacity:1; }
+
+  .loader { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  @media(max-width:700px) {
+    .app { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+    .agenda-panel { border-right:none; border-bottom:1px solid var(--gris-clair); max-height:45vh; }
+    .voice-panel { height:auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-zone">
+    <div class="baobab-icon">🌳</div>
+    <div class="logo-text">
+      <strong>Agenda Vocal</strong><br>
+      <span>FINEBLOCK · P.E.C</span>
+    </div>
+  </div>
+  <div class="date-now" id="headerDate"></div>
+  <button id="installBtn" onclick="installPWA()" style="display:none; align-items:center; gap:6px; background:var(--or-savane); color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif;">
+    📲 Installer
+  </button>
+</header>
+
+<div class="app">
+
+  <!-- AGENDA -->
+  <div class="agenda-panel">
+    <div class="week-nav">
+      <button class="btn-nav" onclick="changeWeek(-1)">◀ Préc.</button>
+      <h2 id="weekTitle"></h2>
+      <button class="btn-nav" onclick="changeWeek(1)">Suiv. ▶</button>
+    </div>
+    <div id="agendaView"></div>
+  </div>
+
+  <!-- VOICE PANEL -->
+  <div class="voice-panel">
+    <div class="voice-header">
+      <h3>Assistant vocal</h3>
+      <p>Parlez naturellement en français.<br>Ajoutez, consultez ou supprimez des événements.</p>
+    </div>
+
+    <div class="mic-zone">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Cliquez pour parler">
+        🎤
+      </button>
+      <div class="mic-status" id="micStatus">Cliquez pour parler</div>
+    </div>
+
+    <div class="transcript-zone">
+      <div class="transcript-label">Vous avez dit</div>
+      <div class="transcript-text" id="transcriptText">—</div>
+    </div>
+
+    <div class="response-zone">
+      <div class="response-label">Réponse</div>
+      <div class="response-bubble empty" id="responseBubble">Prêt à vous écouter…</div>
+    </div>
+
+    <div class="examples">
+      <button class="chip" onclick="simulateVoice('Ajoute réunion Finance Innovation lundi à 14h')">+ Réunion lundi 14h</button>
+      <button class="chip" onclick="simulateVoice('Qu\'est-ce que j\'ai demain ?')">Demain ?</button>
+      <button class="chip" onclick="simulateVoice('Qu\'ai-je cette semaine ?')">Cette semaine ?</button>
+      <button class="chip" onclick="simulateVoice('Présentation jury 30 juin à 9h Bourse de Paris')">Jury 30 juin</button>
+    </div>
+
+    <div class="text-fallback">
+      <label>Ou tapez votre demande</label>
+      <div class="text-input-row">
+        <input class="text-input" type="text" id="textInput" placeholder="Ex : Réunion vendredi à 15h…" onkeydown="if(event.key==='Enter') sendText()">
+        <button class="btn-send" onclick="sendText()">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── STORAGE ─────────────────────────────────────────────
+const STORAGE_KEY = 'fineblock_agenda_v2';
+
+async function loadEvents() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+async function saveEvents(events) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  } catch(e) { console.error('Storage error', e); }
+}
+
+let allEvents = [];
+let currentWeekOffset = 0;
+
+// ─── DATE UTILS ──────────────────────────────────────────
+function getMonday(offset = 0) {
+  const d = new Date();
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1 + offset * 7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function isoDate(d) { return d.toISOString().split('T')[0]; }
+function formatDay(d) {
+  return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+}
+function isToday(d) { return isoDate(d) === isoDate(new Date()); }
+
+// ─── RENDER AGENDA ───────────────────────────────────────
+function renderAgenda() {
+  const monday = getMonday(currentWeekOffset);
+  const sunday = addDays(monday, 6);
+  document.getElementById('weekTitle').textContent =
+    `${monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} – ${sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`;
+
+  const view = document.getElementById('agendaView');
+  view.innerHTML = '';
+
+  for (let i = 0; i < 7; i++) {
+    const day = addDays(monday, i);
+    const dateStr = isoDate(day);
+    const dayEvents = allEvents
+      .filter(e => e.date === dateStr)
+      .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+
+    const block = document.createElement('div');
+    block.className = 'day-block' + (isToday(day) ? ' day-today' : '');
+
+    const labels = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+    const today = isToday(day) ? '<span class="today-badge">Aujourd\'hui</span>' : '';
+
+    block.innerHTML = `
+      <div class="day-header">
+        <div class="day-label">${labels[i]}</div>
+        <div class="day-date">${day.getDate()} ${day.toLocaleDateString('fr-FR',{month:'long'})}</div>
+        ${today}
+      </div>`;
+
+    if (dayEvents.length === 0) {
+      block.innerHTML += `<div class="empty-day">Rien de prévu</div>`;
+    } else {
+      dayEvents.forEach(ev => {
+        const card = document.createElement('div');
+        card.className = 'event-card' + (ev.urgent ? ' urgent' : '') + (ev.deadline ? ' deadline' : '');
+        card.innerHTML = `
+          <div>
+            <div class="event-time">${ev.time || 'Toute la journée'}</div>
+            <div class="event-title">${ev.title}</div>
+            ${ev.note ? `<div class="event-note">${ev.note}</div>` : ''}
+          </div>
+          <div class="event-actions">
+            <button class="btn-del" onclick="deleteEvent('${ev.id}')" title="Supprimer">🗑</button>
+          </div>`;
+        block.appendChild(card);
+      });
+    }
+    view.appendChild(block);
+  }
+}
+
+function changeWeek(dir) {
+  currentWeekOffset += dir;
+  renderAgenda();
+}
+
+// ─── EVENT CRUD ──────────────────────────────────────────
+async function addEvent(ev) {
+  ev.id = Date.now().toString();
+  allEvents.push(ev);
+  await saveEvents(allEvents);
+  renderAgenda();
+}
+
+async function deleteEvent(id) {
+  allEvents = allEvents.filter(e => e.id !== id);
+  await saveEvents(allEvents);
+  renderAgenda();
+  toast('Événement supprimé');
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── SPEECH RECOGNITION ──────────────────────────────────
+let recognition = null;
+let isListening = false;
+
+function setupSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.lang = 'fr-FR';
+  r.continuous = false;
+  r.interimResults = true;
+
+  r.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    const el = document.getElementById('transcriptText');
+    el.textContent = final || interim || '—';
+    el.className = 'transcript-text' + (final ? '' : ' interim');
+    if (final) processCommand(final);
+  };
+
+  r.onend = () => {
+    isListening = false;
+    updateMicUI('idle');
+  };
+
+  r.onerror = (e) => {
+    isListening = false;
+    updateMicUI('idle');
+    if (e.error !== 'no-speech') toast('Micro : ' + e.error);
+  };
+
+  return r;
+}
+
+function toggleMic() {
+  if (!recognition) recognition = setupSpeech();
+  if (!recognition) { toast('Reconnaissance vocale non supportée — utilisez la zone de texte'); return; }
+
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+    updateMicUI('idle');
+  } else {
+    recognition.start();
+    isListening = true;
+    updateMicUI('listening');
+    document.getElementById('transcriptText').textContent = '…';
+    document.getElementById('transcriptText').className = 'transcript-text interim';
+  }
+}
+
+function updateMicUI(state) {
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micStatus');
+  btn.className = 'mic-btn';
+  if (state === 'listening') {
+    btn.classList.add('listening');
+    btn.textContent = '⏹';
+    status.textContent = '● Écoute en cours…';
+    status.className = 'mic-status active';
+  } else if (state === 'processing') {
+    btn.classList.add('processing');
+    btn.textContent = '⏳';
+    status.textContent = 'Traitement…';
+    status.className = 'mic-status processing';
+  } else {
+    btn.textContent = '🎤';
+    status.textContent = 'Cliquez pour parler';
+    status.className = 'mic-status';
+  }
+}
+
+// ─── SIMULATE VOICE (chips) ──────────────────────────────
+function simulateVoice(text) {
+  document.getElementById('transcriptText').textContent = text;
+  document.getElementById('transcriptText').className = 'transcript-text';
+  processCommand(text);
+}
+
+// ─── TEXT INPUT ──────────────────────────────────────────
+function sendText() {
+  const inp = document.getElementById('textInput');
+  const val = inp.value.trim();
+  if (!val) return;
+  document.getElementById('transcriptText').textContent = val;
+  document.getElementById('transcriptText').className = 'transcript-text';
+  inp.value = '';
+  processCommand(val);
+}
+
+// ─── MOTEUR NLP EMBARQUÉ (100% autonome, sans API) ───────
+
+const JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+function normalise(t) {
+  return t.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/['']/g,"'");
+}
+
+// Résoudre une expression de date en YYYY-MM-DD
+function resoudreDate(texte) {
+  const t = normalise(texte);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // "aujourd'hui"
+  if (/aujourd'?hui/.test(t)) return isoDate(today);
+
+  // "demain"
+  if (/demain/.test(t)) return isoDate(addDays(today,1));
+
+  // "après-demain"
+  if (/apres.?demain/.test(t)) return isoDate(addDays(today,2));
+
+  // "lundi prochain", "le lundi", "lundi"
+  for (let i=0; i<7; i++) {
+    if (t.includes(JOURS[i])) {
+      const cur = today.getDay();
+      let diff = i - cur;
+      if (diff <= 0) diff += 7;
+      return isoDate(addDays(today, diff));
+    }
+  }
+
+  // "15 juin", "30 juin 2026", "le 30 juin"
+  const mMatch = t.match(/(\d{1,2})\s+(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)(?:\s+(\d{4}))?/);
+  if (mMatch) {
+    const day = parseInt(mMatch[1]);
+    const month = MOIS.findIndex(m => normalise(m) === mMatch[2]);
+    const year = mMatch[3] ? parseInt(mMatch[3]) : today.getFullYear();
+    const d = new Date(year, month, day);
+    if (d < today && !mMatch[3]) d.setFullYear(year+1);
+    return isoDate(d);
+  }
+
+  // "cette semaine" → aujourd'hui
+  if (/cette semaine|semaine/.test(t)) return isoDate(today);
+
+  return null;
+}
+
+// Résoudre une heure en "HH:MM"
+function resoudreHeure(texte) {
+  const t = normalise(texte);
+
+  // "14h30", "14h", "14:30"
+  const h1 = t.match(/(\d{1,2})h(\d{2})?/);
+  if (h1) {
+    const h = h1[1].padStart(2,'0');
+    const m = h1[2] ? h1[2] : '00';
+    return `${h}:${m}`;
+  }
+
+  // "quatorze heures", "neuf heures", etc.
+  const motsHeure = {
+    'une':1,'deux':2,'trois':3,'quatre':4,'cinq':5,'six':6,
+    'sept':7,'huit':8,'neuf':9,'dix':10,'onze':11,'douze':12,
+    'treize':13,'quatorze':14,'quinze':15,'seize':16,
+    'dix-sept':17,'dix sept':17,'dix-huit':18,'dix huit':18,
+    'dix-neuf':19,'dix neuf':19,'vingt':20,'vingt et une':21,
+    'vingt-deux':22,'vingt deux':22,'vingt-trois':23,'vingt trois':23
+  };
+  for (const [mot, val] of Object.entries(motsHeure)) {
+    if (t.includes(mot + ' heure') || t.includes(mot + 'h')) {
+      return `${String(val).padStart(2,'0')}:00`;
+    }
+  }
+
+  // "midi"
+  if (/midi/.test(t)) return '12:00';
+  // "minuit"
+  if (/minuit/.test(t)) return '00:00';
+  // "matin" → 9h, "après-midi" → 14h, "soir" → 19h
+  if (/\bmatin\b/.test(t) && !resoudreHeure(t.replace('matin',''))) return '09:00';
+  if (/apres.?midi/.test(t) && !h1) return '14:00';
+  if (/\bsoir\b/.test(t) && !h1) return '19:00';
+
+  return '';
+}
+
+// Extraire le titre de l'événement
+function extraireTitre(texte) {
+  let t = texte;
+  // Supprimer formules de politesse
+  t = t.replace(/bonjour[,\s]*/gi,'').replace(/s'?il (vous|te) pla[iî]t[,\s]*/gi,'').trim();
+  // Supprimer mots de commande
+  t = t.replace(/^(ajoute|ajouter|note|noter|rappelle.moi que?|je dois|mets|mettre|inscris|inscris.moi|planifie|planifier|crée|créer|prévoir|prévois)\s*/gi,'');
+  // Supprimer la date et l'heure
+  t = t.replace(/\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\b/gi,'');
+  t = t.replace(/\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b/gi,'');
+  t = t.replace(/\d{1,2}h\d{0,2}/g,'').replace(/\d{1,2}:\d{2}/g,'');
+  t = t.replace(/\b(ce|cette|le|la|les|un|une|du|au|à|a|pour|avec|demain|aujourd'hui|prochain|prochaine|matin|soir|après-midi|apres-midi)\b/gi,' ');
+  t = t.replace(/\s{2,}/g,' ').trim();
+  // Capitaliser
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// Détecter les dates de consultation (cette semaine, demain, etc.)
+function datesConsultation(texte) {
+  const t = normalise(texte);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dates = [];
+
+  if (/cette semaine|semaine/.test(t)) {
+    for (let i=0; i<7; i++) dates.push(isoDate(addDays(today,i)));
+    return dates;
+  }
+  if (/demain/.test(t)) { dates.push(isoDate(addDays(today,1))); return dates; }
+  if (/aujourd'?hui/.test(t)) { dates.push(isoDate(today)); return dates; }
+  if (/ce (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)/.test(t)) {
+    const d = resoudreDate(texte); if(d) dates.push(d); return dates;
+  }
+  // Jour de la semaine seul
+  for (const j of JOURS) {
+    if (t.includes(j)) { const d = resoudreDate(j); if(d) dates.push(d); return dates; }
+  }
+  return null;
+}
+
+// Détecter l'intention
+function detecterIntention(texte) {
+  const t = normalise(texte);
+
+  // SUPPRESSION
+  if (/\b(supprime|supprimer|efface|effacer|annule|annuler|retire|enlève|enlever|delete)\b/.test(t)) return 'delete';
+
+  // CONSULTATION
+  if (/\b(quoi|qu'est.ce|qu'ai.je|qu'est ce que j'ai|qu'ai je|qu'y a.t.il|qu'y a t il|qu'est-ce que j'ai|quel(s|les)? (rdv|rendez.vous|événement|event|réunion)|montre|affiche|liste|voir|voir mes|rappelle|rappel|c'est quoi|programme)\b/.test(t) ||
+      /\b(cette semaine|demain|aujourd'hui|ce (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche))\b/.test(t) && !/\b(ajoute|note|crée|prévoir|rendez.vous|réunion|appel|meeting|prends?)\b/.test(t)) {
+    return 'list';
+  }
+
+  // AJOUT
+  if (/\b(ajoute|ajouter|note|noter|rappelle.moi|mets|mettre|inscris|planifie|crée|créer|prévois|prévoir|j'ai|j'aurai|rendez.vous|réunion|meeting|rdv|appel|appeler|entretien|visite|rencontre|souhaite|veux|dois)\b/.test(t)) return 'add';
+
+  return 'unclear';
+}
+
+async function processCommand(text) {
+  updateMicUI('processing');
+  showResponse('⚙️ Analyse en cours…', false);
+
+  await new Promise(r => setTimeout(r, 300)); // petit délai UX
+
+  const intention = detecterIntention(text);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // ── CONSULTATION ──
+  if (intention === 'list') {
+    const dates = datesConsultation(text);
+    if (!dates || dates.length === 0) {
+      showResponse('Pour quelle date souhaitez-vous consulter votre agenda ?', true);
+      updateMicUI('idle'); return;
+    }
+    const evs = allEvents.filter(e => dates.includes(e.date)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+    if (evs.length === 0) {
+      const label = dates.length > 1 ? 'cette période' : new Date(dates[0]+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+      showResponse(`Rien de prévu pour ${label}. 📭`, true);
+    } else {
+      const lines = evs.map(e => {
+        const d = new Date(e.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+        return `• ${d}${e.time ? ' à '+e.time : ''} — ${e.title}`;
+      }).join('\n');
+      showResponse(`Voici vos événements :\n\n${lines}`, true);
+    }
+    updateMicUI('idle'); return;
+  }
+
+  // ── SUPPRESSION ──
+  if (intention === 'delete') {
+    const t = normalise(text);
+    const match = allEvents.find(e => t.includes(normalise(e.title).substring(0,6)));
+    if (match) {
+      await deleteEvent(match.id);
+      showResponse(`✅ "${match.title}" supprimé de votre agenda.`, true);
+    } else {
+      showResponse('Je n\'ai pas trouvé cet événement. Précisez le nom ou la date.', true);
+    }
+    updateMicUI('idle'); return;
+  }
+
+  // ── AJOUT ──
+  if (intention === 'add') {
+    const date = resoudreDate(text);
+    const time = resoudreHeure(text);
+    const titre = extraireTitre(text);
+
+    if (!date) {
+      showResponse('Pour quel jour souhaitez-vous ce rendez-vous ?', true);
+      updateMicUI('idle'); return;
+    }
+    if (!titre || titre.length < 2) {
+      showResponse('Quel est l\'objet de ce rendez-vous ?', true);
+      updateMicUI('idle'); return;
+    }
+
+    await addEvent({ title: titre, date, time, note:'', urgent:false, deadline:false });
+
+    // Naviguer vers la semaine de l'événement
+    const evDate = new Date(date+'T12:00');
+    const mondayNow = getMonday(0);
+    const diff = Math.floor((evDate - mondayNow) / (7*24*3600*1000));
+    if (diff !== currentWeekOffset) { currentWeekOffset = diff; renderAgenda(); }
+
+    const dateLabel = evDate.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    showResponse(`✅ Noté ! "${titre}" ajouté le ${dateLabel}${time ? ' à '+time : ''}.`, true);
+    toast('✅ Événement ajouté !');
+    updateMicUI('idle'); return;
+  }
+
+  // ── INCOMPRIS ──
+  showResponse('Je n\'ai pas bien compris. Essayez par exemple :\n\n• "Réunion lundi à 10h"\n• "Qu\'ai-je demain ?"\n• "Supprime la réunion de mardi"', true);
+  updateMicUI('idle');
+}
+
+function showResponse(text, isNormal) {
+  const el = document.getElementById('responseBubble');
+  el.innerHTML = text.replace(/\n/g,'<br>');
+  el.className = 'response-bubble' + (isNormal ? '' : ' empty');
+}
+
+// ─── HEADER DATE ─────────────────────────────────────────
+function updateHeaderDate() {
+  const now = new Date();
+  document.getElementById('headerDate').innerHTML =
+    now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) +
+    '<br>' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init() {
+  allEvents = await loadEvents();
+  renderAgenda();
+  updateHeaderDate();
+  setInterval(updateHeaderDate, 30000);
+
+  // Add a sample P.E.C event if empty
+  if (allEvents.length === 0) {
+    const june30 = '2026-06-30';
+    await addEvent({ title:'Présentation jury Finance Innovation', date: june30, time:'09:00', note:'Bourse de Paris — Labellisation P.E.C', urgent:true, deadline:false });
+    currentWeekOffset = Math.floor((new Date(june30+'T12:00') - getMonday(0)) / (7*24*3600*1000));
+    renderAgenda();
+  }
+}
+
+init();
+
+// ─── SERVICE WORKER (PWA) ────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('PWA: Service Worker enregistré'))
+      .catch(e => console.log('PWA: SW erreur', e));
+  });
+}
+
+// ─── BOUTON INSTALLATION PWA ────────────────────────────
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Afficher bouton d'installation
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'flex';
+});
+
+window.addEventListener('appinstalled', () => {
+  toast('✅ Agenda installé sur votre écran d\'accueil !');
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'none';
+  deferredPrompt = null;
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') toast('Installation en cours…');
+      deferredPrompt = null;
+    });
+  }
+}
+</script>
+</body>
+</html>
